@@ -13,9 +13,11 @@ pgm* pgm_alloc(int  height, int width, int max_value);
 
 void pgm_free(pgm *image);
 
+pgm* pgm_read_asc(char *fname);
+
 int pgm_write_asc( pgm *save, char *fname);
 
-pgm* pgm_read_bin(char *fname),
+pgm* pgm_read_bin(char *fname);
 
 
 int main( void  );

@@ -3,11 +3,9 @@
 
 int main( void )
 {
-    char filename[14] = "data/eye_s_asc.pgm";
+    char filename[19] = "data/eye_s_asc.bin";
     pgm *image = pgm_read_bin(filename);
-
-    printf("%d",image->height);
-    pgm_write_asc(image,"oui.pgm");
+    //pgm_write_asc(image,"oui.pgm");
     
     return 0;
 }

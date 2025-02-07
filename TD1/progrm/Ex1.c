@@ -7,6 +7,8 @@ Q-1.1:
 Ecrire une structure pgm qui contiendra la hauteur (height), la largeur (width) la valeur maximale
 de codage des pixels (max_value) ainsi qu’un pointeur sur un tableau à deux dimensions de caractères
 non-signés (pixels).
+
+VOIR FICHIER HEADER
 */
 
 
@@ -82,8 +84,8 @@ pgm* pgm_read_asc(char *fname)
     {
         for( int j =0; j < width; j++)
         {
-            fscanf(file, "%hhd",&(image->pixel[i][j]));
-            printf("%hhd\n",(image->pixel[i][j]));
+            fscanf(file, "%hhu",&(image->pixel[i][j]));
+            printf("%hhu\n",(image->pixel[i][j]));
         }
         printf("\n");
     }
@@ -97,7 +99,7 @@ caractères contenant le nom du fichier (fname) à écrire (au format ASCII) ain
 une structure pgm. La fonction retournera un entier égale à 0 si tout s’est bien passé et à 1 sinon.
 */
 
-int pgm_write_asc( struct pgm *save, char *fname)
+int pgm_write_asc( pgm *save, char *fname)
 {
     FILE *fichier = fopen(fname, "w");
     if (fichier == NULL) return  0;
@@ -126,7 +128,10 @@ sur une structure pgm contenant les informations relatives à l’image contenue
 struct pgm* pgm_read_bin(char *fname)
 {
     FILE *fichier = fopen(fname,"rb");
-    if (fichier == NULL) return NULL;
+    if (fichier == NULL){
+        printf("ok");
+        return NULL;
+    }
     char trash[2];
     fread(trash,sizeof(char),2,fichier);
     int width;
@@ -141,9 +146,30 @@ struct pgm* pgm_read_bin(char *fname)
         for( int j =0; j < width; j++)
         {
             fread(&(image->pixel[i][j]),sizeof(unsigned  char),1,fichier);
+            printf("%u",image->pixel[i][j]);
         }
     }
     return image;
 }
 
+/*
+Q-1.7:
+Écrire la fonction pgm_write_bin qui prendra en paramètre un pointeur sur une chaine de
+caractères contenant le nom du fichier (fname à écrire (au format BINAIRE) ainsi qu’un pointeur sur
+une structure pgm. La fonction retournera un entier égale à 0 si tout s’est bien passé et à 1 sinon.
+*/
+int pgm_write_bin( pgm *save, char *fname)
+{
+    FILE *fichier = fopen(fname, "w");
+    if (fichier == NULL) return  0;
+    fwrite(fichier,"P5\n");
+    fprintf(save->width,sizeof(int), 1, fichier);
+    fprintf(save->height,sizeof(int),1,fichier);
+    fprintf(save->max_value, sizeof(int), 1, fichier);
+    for(int i = 0; i < save -> height; i++)
+    {
+        fwrite(save->pixel[i],sizeof(unsigned  char),save->width,fichier);
+    }
+    return 1;
+}
 
