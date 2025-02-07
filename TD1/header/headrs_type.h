@@ -19,6 +19,7 @@ int pgm_write_asc( pgm *save, char *fname);
 
 pgm* pgm_read_bin(char *fname);
 
+int pgm_write_bin( pgm *save, char  *fname);
 
 int main( void  );
 

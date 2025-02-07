@@ -160,12 +160,13 @@ une structure pgm. La fonction retournera un entier égale à 0 si tout s’est 
 */
 int pgm_write_bin( pgm *save, char *fname)
 {
-    FILE *fichier = fopen(fname, "w");
+    FILE *fichier = fopen(fname, "wb");
     if (fichier == NULL) return  0;
-    fwrite(fichier,"P5\n");
-    fprintf(save->width,sizeof(int), 1, fichier);
-    fprintf(save->height,sizeof(int),1,fichier);
-    fprintf(save->max_value, sizeof(int), 1, fichier);
+    char data[4] = "P5\n";
+    fwrite(data,sizeof(char),3,fichier);
+    fwrite(&(save->width),sizeof(int), 1, fichier);
+    fwrite(&(save->height),sizeof(int),1,fichier);
+    fwrite(&(save->max_value), sizeof(int), 1, fichier);
     for(int i = 0; i < save -> height; i++)
     {
         fwrite(save->pixel[i],sizeof(unsigned  char),save->width,fichier);
@@ -173,3 +174,24 @@ int pgm_write_bin( pgm *save, char *fname)
     return 1;
 }
 
+/*
+Q-1.8:
+Écrire la fonction pgm_negative qui prendra en paramètre un pointeur scr sur une structure
+pgm contenant l’image source et un pointeur dst sur une structure pgm contenant le négatif de
+l’image source.
+*/
+//retrouver la musique neon nightlife
+/*
+pgm *pgm_negative(pgm *entree)
+{
+    pgm *sortie = NULL;
+    sortie = pgm_alloc(entree->height,entree->width,entree->max_value);
+    for (int i = 0;  i < entree->height; i++)
+    {
+        for (int j = 0; j < entree->width; j++)
+        {
+            sortie->pixel[i][j] = entree->pixel[i][j];
+        }
+    }
+}
+*/

@@ -3,9 +3,9 @@
 
 int main( void )
 {
-    char filename[19] = "data/eye_s_asc.bin";
+    char filename[19] = "data/oui.bin";
     pgm *image = pgm_read_bin(filename);
-    //pgm_write_asc(image,"oui.pgm");
+    //pgm_write_bin(image,"non.pgm");
     
     return 0;
 }
