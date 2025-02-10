@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "/home/axel/Documents/GitHub/Algo_des_images/TD1/header/headrs_type.h"
+#include "../header/headrs_type.h"
 
 /*
 Q-1.1:
@@ -125,33 +125,43 @@ caractères contenant le nom du fichier au format BINAIRE à lire (fname) et ret
 sur une structure pgm contenant les informations relatives à l’image contenue dans le fichier fname.
 */
 
-struct pgm* pgm_read_bin(char *fname)
+pgm* pgm_read_bin(char *fname)
 {
-    FILE *fichier = fopen(fname,"rb");
-    if (fichier == NULL){
-        printf("ok");
+    int height;
+    int width;
+    int max_value;
+    char temp[3];
+    int c;
+    FILE *file = fopen(fname,"rb");
+    if(file == NULL)
+    {
+        printf("erreur fichier\n");
         return NULL;
     }
-    char trash[2];
-    fread(trash,sizeof(char),2,fichier);
-    int width;
-    fread(&width,sizeof(int),1,fichier);
-    int height;
-    fread(&height,sizeof(int),1,fichier);
-    int max_value;
-    fread(&max_value,sizeof(int),1,fichier);
+    
+    fscanf(file, "%2s",temp);
+    fgetc(file);
+    c = fgetc(file);
+    while(c != '\n')
+    {
+        c = fgetc(file);
+        
+    }
+    fscanf(file,"%d",&width);
+    fscanf(file,"%d",&height);
+    fscanf(file,"%d",&max_value);
     pgm *image = pgm_alloc(height,width,max_value);
     for(int i = 0; i < height; i++)
     {
         for( int j =0; j < width; j++)
         {
-            fread(&(image->pixel[i][j]),sizeof(unsigned  char),1,fichier);
-            printf("%u",image->pixel[i][j]);
+            fread(&(image->pixel[i][j]),8,1,file);
+            printf("%c\n",(image->pixel[i][j]));
         }
+        printf("\n");
     }
     return image;
 }
-
 /*
 Q-1.7:
 Écrire la fonction pgm_write_bin qui prendra en paramètre un pointeur sur une chaine de
@@ -181,7 +191,6 @@ pgm contenant l’image source et un pointeur dst sur une structure pgm contenan
 l’image source.
 */
 //retrouver la musique neon nightlife
-/*
 pgm *pgm_negative(pgm *entree)
 {
     pgm *sortie = NULL;
@@ -190,8 +199,8 @@ pgm *pgm_negative(pgm *entree)
     {
         for (int j = 0; j < entree->width; j++)
         {
-            sortie->pixel[i][j] = entree->pixel[i][j];
+            sortie->pixel[i][j] = 255-entree->pixel[i][j];
         }
     }
+    return  sortie;
 }
-*/
