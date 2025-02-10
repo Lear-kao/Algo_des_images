@@ -21,6 +21,8 @@ pgm* pgm_read_bin(char *fname);
 
 int pgm_write_bin( pgm *save, char  *fname);
 
+pgm *pgm_negative(pgm *entree);
+
 int main( void  );
 
 #endif // _test_h_

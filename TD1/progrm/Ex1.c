@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../header/headrs_type.h"
 
 /*
@@ -139,27 +140,25 @@ pgm* pgm_read_bin(char *fname)
         return NULL;
     }
     
-    fscanf(file, "%2s",temp);
-    fgetc(file);
-    c = fgetc(file);
-    while(c != '\n')
+    fscanf(file, "%3s",temp);
+    do
     {
         c = fgetc(file);
         
-    }
-    fscanf(file,"%d",&width);
-    fscanf(file,"%d",&height);
-    fscanf(file,"%d",&max_value);
+    } while( c != '\n');
+    fread(&width,sizeof(char),1,file);
+    fread(&height,sizeof(char),1,file);
+    fread(&max_value,sizeof(char),1,file);
+    printf("%d-%d-%d\n",height,width,max_value);
     pgm *image = pgm_alloc(height,width,max_value);
-    for(int i = 0; i < height; i++)
+    for( int i = 0;  i < height;  i++)
     {
-        for( int j =0; j < width; j++)
+        for(int j = 0; j < width; j++)
         {
-            fread(&(image->pixel[i][j]),8,1,file);
-            printf("%c\n",(image->pixel[i][j]));
+            fread( &image->pixel[i][j], sizeof( unsigned char), 1, file);
         }
-        printf("\n");
     }
+    
     return image;
 }
 /*
@@ -172,15 +171,9 @@ int pgm_write_bin( pgm *save, char *fname)
 {
     FILE *fichier = fopen(fname, "wb");
     if (fichier == NULL) return  0;
-    char data[4] = "P5\n";
-    fwrite(data,sizeof(char),3,fichier);
-    fwrite(&(save->width),sizeof(int), 1, fichier);
-    fwrite(&(save->height),sizeof(int),1,fichier);
-    fwrite(&(save->max_value), sizeof(int), 1, fichier);
-    for(int i = 0; i < save -> height; i++)
-    {
-        fwrite(save->pixel[i],sizeof(unsigned  char),save->width,fichier);
-    }
+    fprintf(fichier, "P5\n%d %d\n%d\n", save->width, save->height, save->max_value);
+    fwrite(&save->pixel[0],sizeof(unsigned char),save->height*save->width,fichier);
+    fclose(fichier);
     return 1;
 }
 
@@ -193,13 +186,13 @@ l’image source.
 //retrouver la musique neon nightlife
 pgm *pgm_negative(pgm *entree)
 {
-    pgm *sortie = NULL;
+    pgm *sortie;
     sortie = pgm_alloc(entree->height,entree->width,entree->max_value);
     for (int i = 0;  i < entree->height; i++)
     {
         for (int j = 0; j < entree->width; j++)
         {
-            sortie->pixel[i][j] = 255-entree->pixel[i][j];
+            sortie->pixel[i][j] = entree->max_value-entree->pixel[i][j];
         }
     }
     return  sortie;
