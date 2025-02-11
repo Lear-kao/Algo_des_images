@@ -68,6 +68,7 @@ pgm* pgm_read_asc(char *fname)
     int width;
     int max_value;
     char temp;
+    char c;
     printf("au village sans prétention\n");
     FILE *file = fopen(fname,"r");
     printf("j'ai mauvaise réputation\n");
@@ -76,7 +77,13 @@ pgm* pgm_read_asc(char *fname)
         printf("erreur fichier\n");
         return NULL;
     }
-    fscanf(file, "%s",&temp);
+    fscanf(file, "%3c",temp);
+    do
+    {
+        fscanf(file, "%c",&c);
+        printf("%c",c);
+        
+    } while( c != '\n');
     fscanf(file,"%d",&width);
     fscanf(file,"%d",&height);
     fscanf(file,"%d",&max_value);
@@ -132,7 +139,7 @@ pgm* pgm_read_bin(char *fname)
     int width;
     int max_value;
     char temp[3];
-    int c;
+    char c;
     FILE *file = fopen(fname,"rb");
     if(file == NULL)
     {
@@ -140,15 +147,16 @@ pgm* pgm_read_bin(char *fname)
         return NULL;
     }
     
-    fscanf(file, "%3s",temp);
+    fscanf(file, "%3c",temp);
     do
     {
-        c = fgetc(file);
+        fscanf(file, "%c",&c);
+        printf("%c",c);
         
     } while( c != '\n');
-    fread(&width,sizeof(char),1,file);
-    fread(&height,sizeof(char),1,file);
-    fread(&max_value,sizeof(char),1,file);
+    fscanf(file, "%d",&width);
+    fscanf(file, "%d",&height);
+    fscanf(file, "%d",&max_value);
     printf("%d-%d-%d\n",height,width,max_value);
     pgm *image = pgm_alloc(height,width,max_value);
     for( int i = 0;  i < height;  i++)
@@ -172,7 +180,11 @@ int pgm_write_bin( pgm *save, char *fname)
     FILE *fichier = fopen(fname, "wb");
     if (fichier == NULL) return  0;
     fprintf(fichier, "P5\n%d %d\n%d\n", save->width, save->height, save->max_value);
-    fwrite(&save->pixel[0],sizeof(unsigned char),save->height*save->width,fichier);
+    for( int i = 0; i < save -> height; i++)
+    {
+        for( int j = 0;  j < save->width; j++) fwrite(&save->pixel[i][j],sizeof(unsigned char),1,fichier);
+    }
+    
     fclose(fichier);
     return 1;
 }
@@ -196,4 +208,89 @@ pgm *pgm_negative(pgm *entree)
         }
     }
     return  sortie;
+}
+
+/* 
+Q-1.9:
+Ecrire la fonction pgm_extract qui en paramètre un pointeur sur une chaine de caractères
+contenant le nom du fichier de sortie (fname), une structure pgm_t, les coordonnées dx et dy
+indiquant le point de départ de l’image à extraire et les dimensions de l’image à extraire width et
+height. La fonction écrira dans le fichier fname une “sous-image” extraite de l’image principale.
+*/
+
+void pgm_extract( char *fname, pgm *image, int dx, int dy, int width, int  height)
+{
+    int cmptx = 0, cmpty = 0;
+    pgm *image_extr = pgm_alloc(height,width,image->max_value);
+    for( int i = dy; i < dy+height; i++)
+    {
+        for( int j = dx; j < dx+width; j++)
+        {
+            image_extr->pixel[cmptx][cmpty] = image->pixel[j][i];
+            cmptx+=1;
+        }
+        cmpty +=1;
+        cmptx = 0;
+    }
+    pgm_write_bin(image_extr,fname);
+}
+
+/* 
+Q-1.10:
+Écrire la fonction pgm_get_histrogram qui prendra en paramètre un pointeur sur une structure
+pgm et qui retournera un pointeur sur un tableu de max_value contenant l’histogramme des pixels
+de l’image.
+*/
+
+int * histogramme(pgm *image)
+{
+    int *tab = (int*)malloc(sizeof(int)*image->max_value);
+    for(int i = 0; i < image->max_value; i++)
+    {
+        tab[i] = 0;
+    }
+    for( int i = 0; i < image->height; i++){
+        for(int j = 0; j < image->width; j++)
+        {
+            tab[image->pixel[i][j]]++;
+        }
+    }
+    return tab;
+}
+
+/* 
+Q-1.11:
+Ecrire la fonction pgm_write_histogram qui prendra en paramètre un pointeur sur une structure
+pgm, un pointeur sur une chaine de caractère fname. La fonction devra créer le fichier fname et
+l’histogramme de l’image sous la forme de deux colonnes (la première colonne contiendra les valeurs
+de 0 à max_value, la seconde les données de l’histogramme correspondant).
+*/
+int max_tab( int *tab, int max_ind)
+{
+    int max = tab[0];
+    for(int i = 0; i < max_ind ; i++)
+    {
+        if ( max  < tab[i]) max = tab[i];
+    }
+    return max;
+}
+
+void pgm_write_histogram( pgm *image,  char *fname)
+{
+    int *tab = histogramme(image);
+    int max = max_tab(tab, image->max_value);
+    pgm *histo = pgm_alloc(max,image->max_value,1);
+    printf("%d",max);
+    for(int i = image->max_value-1; i >=0; i--)
+    {
+        for(int j = max-1; j >= 0;j-- )
+        {
+            if (tab[i] >= j)
+            {
+                histo->pixel[j][i] = 1;
+            }
+            else histo->pixel[j][i] = 0;
+        }
+    }
+    pgm_write_bin(histo,fname);
 }

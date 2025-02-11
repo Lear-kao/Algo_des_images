@@ -16,11 +16,14 @@ default: $(EXE)
 $(OBJ_Dir)/fct.o : $(SRC_Dir)/Ex1.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir)/Ex1.c $(CFLAGS) -o $(OBJ_Dir)/fct.o
 
+$(OBJ_Dir)/fct2.o : $(SRC_Dir)/Ex2.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(SRC_Dir)/Ex2.c $(CFLAGS) -o $(OBJ_Dir)/fct2.o
+
 $(OBJ_Dir)/comp.o : $(SRC_Dir)/main.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir)/main.c $(CFLAGS) -o $(OBJ_Dir)/comp.o
 
-$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/comp.o 
-	$(CC) $(CFLAGS) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/comp.o
+$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/comp.o 
+	$(CC) $(CFLAGS) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/comp.o
 
 clean:
 	rm -f $(OBJ_Dir)/*.o
