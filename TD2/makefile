@@ -26,4 +26,4 @@ $(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/comp.o
 	$(CC) $(CFLAGS) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/comp.o
 
 clean:
-	rm -f $(OBJ_Dir)/*.o n*.ppm .pgm
+	rm -f $(OBJ_Dir)/*.o non.ppm 

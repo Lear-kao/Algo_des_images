@@ -19,7 +19,12 @@ int main( void )
     {
         char filename[19] = "data/eye_s_asc.ppm";
         ppm *image = ppm_read_bin(filename);
-        ppm_write_bin(image,"non.ppm");
+        ppm *neg = ppm_negative(image);
+        ppm_extract("bonjour.ppm",neg,100,100,200,200);
+        ppm_write_bin(neg,"non.ppm");
+        ppm_write_histogram(image,"aled.ppm");
+        pgm *conv;
+        ppm_to_pgm(image,conv);
     }
     else return 1;
     return 0;

@@ -13,7 +13,6 @@ VOIR FICHIER HEADER
 */
 
 
-
 /*
 Q-1.2:
 Écrire une fonction pgm_alloc qui prend en paramètre la hauteur (height), la largeur (width)
@@ -41,12 +40,12 @@ pgm* pgm_alloc(int  height, int width, int max_value)
     return image;
 }
 
+
 /*
 Q-1.3:
 Écrire une fonction pgm_free qui prend en paramètre un pointeur sur une structure pgm et libère
 l’espace mémoire occupé par cette structure.
 */
-
 void pgm_free(pgm *image)
 {
     for (int i = 0; i < image->height; i++) free(image->pixel[i]);
@@ -61,13 +60,12 @@ Q-1.4:
 caractères contenant le nom du fichier au format ASCII à lire (fname) et retournant un pointeur sur
 une structure pgm contenant les informations relatives à l’image contenue dans le fichier fname.
 */
-
 pgm* pgm_read_asc(char *fname)
 {
     int height;
     int width;
     int max_value;
-    char temp;
+    char temp[3];
     char c;
     printf("au village sans prétention\n");
     FILE *file = fopen(fname,"r");
@@ -100,13 +98,13 @@ pgm* pgm_read_asc(char *fname)
     return image;
 }
 
+
 /*
 Q-1.5:
 Écrire la fonction pgm_write_asc qui prendra en paramètre un pointeur sur une chaine de
 caractères contenant le nom du fichier (fname) à écrire (au format ASCII) ainsi qu’un pointeur sur
 une structure pgm. La fonction retournera un entier égale à 0 si tout s’est bien passé et à 1 sinon.
 */
-
 int pgm_write_asc( pgm *save, char *fname)
 {
     FILE *fichier = fopen(fname, "w");
@@ -126,13 +124,13 @@ int pgm_write_asc( pgm *save, char *fname)
     return 1;
 }
 
+
 /*
 Q-1.6:
 Écrire la fonction pgm_read_bin qui prendra en paramètre un pointeur sur une chaine de
 caractères contenant le nom du fichier au format BINAIRE à lire (fname) et retournant un pointeur
 sur une structure pgm contenant les informations relatives à l’image contenue dans le fichier fname.
 */
-
 pgm* pgm_read_bin(char *fname)
 {
     int height;
@@ -169,6 +167,8 @@ pgm* pgm_read_bin(char *fname)
     
     return image;
 }
+
+
 /*
 Q-1.7:
 Écrire la fonction pgm_write_bin qui prendra en paramètre un pointeur sur une chaine de
@@ -184,10 +184,10 @@ int pgm_write_bin( pgm *save, char *fname)
     {
         for( int j = 0;  j < save->width; j++) fwrite(&save->pixel[i][j],sizeof(unsigned char),1,fichier);
     }
-    
     fclose(fichier);
     return 1;
 }
+
 
 /*
 Q-1.8:
@@ -210,6 +210,7 @@ pgm *pgm_negative(pgm *entree)
     return  sortie;
 }
 
+
 /* 
 Q-1.9:
 Ecrire la fonction pgm_extract qui en paramètre un pointeur sur une chaine de caractères
@@ -217,7 +218,6 @@ contenant le nom du fichier de sortie (fname), une structure pgm_t, les coordonn
 indiquant le point de départ de l’image à extraire et les dimensions de l’image à extraire width et
 height. La fonction écrira dans le fichier fname une “sous-image” extraite de l’image principale.
 */
-
 void pgm_extract( char *fname, pgm *image, int dx, int dy, int width, int  height)
 {
     int cmptx = 0, cmpty = 0;
@@ -235,14 +235,14 @@ void pgm_extract( char *fname, pgm *image, int dx, int dy, int width, int  heigh
     pgm_write_bin(image_extr,fname);
 }
 
+
 /* 
 Q-1.10:
 Écrire la fonction pgm_get_histrogram qui prendra en paramètre un pointeur sur une structure
 pgm et qui retournera un pointeur sur un tableu de max_value contenant l’histogramme des pixels
 de l’image.
 */
-
-int * histogramme(pgm *image)
+int * pgm_get_histogramme(pgm *image)
 {
     int *tab = (int*)malloc(sizeof(int)*image->max_value);
     for(int i = 0; i < image->max_value; i++)
@@ -258,12 +258,9 @@ int * histogramme(pgm *image)
     return tab;
 }
 
+
 /* 
-Q-1.11:
-Ecrire la fonction pgm_write_histogram qui prendra en paramètre un pointeur sur une structure
-pgm, un pointeur sur une chaine de caractère fname. La fonction devra créer le fichier fname et
-l’histogramme de l’image sous la forme de deux colonnes (la première colonne contiendra les valeurs
-de 0 à max_value, la seconde les données de l’histogramme correspondant).
+Trouve la valeur maximale d'un tableau 1d.
 */
 int max_tab( int *tab, int max_ind)
 {
@@ -275,9 +272,17 @@ int max_tab( int *tab, int max_ind)
     return max;
 }
 
+
+/* 
+Q-1.11:
+Ecrire la fonction pgm_write_histogram qui prendra en paramètre un pointeur sur une structure
+pgm, un pointeur sur une chaine de caractère fname. La fonction devra créer le fichier fname et
+l’histogramme de l’image sous la forme de deux colonnes (la première colonne contiendra les valeurs
+de 0 à max_value, la seconde les données de l’histogramme correspondant).
+*/
 void pgm_write_histogram( pgm *image,  char *fname)
 {
-    int *tab = histogramme(image);
+    int *tab = pgm_get_histogramme(image);
     int max = max_tab(tab, image->max_value);
     pgm *histo = pgm_alloc(max,image->max_value,1);
     printf("%d",max);
