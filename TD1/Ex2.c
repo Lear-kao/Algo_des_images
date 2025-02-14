@@ -208,7 +208,7 @@ int ppm_write_bin( ppm *save, char *fname)
 
 
 /* 
-Q-1.8:
+Q-2.8:
 Écrire la fonction ppm_negative qui prendra en paramètre un pointeur scr sur une structure
 ppm contenant l’image source et un pointeur dst sur une structure ppm contenant le négatif de
 l’image source.
@@ -231,7 +231,7 @@ ppm *ppm_negative(ppm *entree)
 
 
 /* 
-Q-1.9:
+Q-2.9:
 Écrire la fonction ppm_extract qui en paramètre un pointeur sur une chaine de caractères
 contenant le nom du fichier de sortie (fname), une structure ppm_t, les coordonnées dx et dy
 indiquant le point de départ de l’image à extraire et les dimensions de l’image à extraire width et
@@ -257,7 +257,7 @@ void ppm_extract( char *fname, ppm *image, int dx, int dy, int width, int  heigh
 }
 
 /* 
-Q-1.10:
+Q-2.10:
 Écrire la fonction ppm_get_histrogram qui prendra en paramètre un pointeur sur une structure
 ppm et qui retournera un pointeur sur un tableu à deux dimensions (3,=maxvalue =) contenant les
 histogrammes des trois composantes RGB des pixels de l’image.
@@ -307,7 +307,7 @@ int *max_tab_2d( int **tab, int max_ind)
 }
 
 /* 
-Q-1.11:
+Q-2.11:
 Écrire la fonction ppm_write_histogram qui prendra en paramètre un pointeur sur une structure
 ppm, un pointeur sur une chaine de caractère fname. La fonction devra créer le fichier fname et
 l’histogramme de l’image sous la forme de quatre colonnes (la première colonne contiendra les
@@ -369,7 +369,7 @@ int moy3(int a, int b, int c)
 
 
 /* 
-Q-1.12:
+Q-2.12:
 Écrire la fonction ppm_to_pgm qui prendra en paramètre un pointeur sur une structure ppm et un
 pointeur sur une structure pgm. La fonction convertira l’image ppm en image pgm.
 */

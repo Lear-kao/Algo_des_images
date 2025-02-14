@@ -91,6 +91,15 @@ void ppm_to_pgm(ppm *image, pgm *conv);
 
 /* 
 ---------------------------
+--------Exercice 3---------
+---------------------------
+*/
+
+void pgm_extract_blk(ppm *inpgm, double *blk[8][8], int i, int j);
+
+
+/* 
+---------------------------
 ------prog principal-------
 ---------------------------
 */
