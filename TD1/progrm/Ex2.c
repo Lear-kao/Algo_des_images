@@ -190,7 +190,7 @@ int ppm_write_bin( ppm *save, char *fname)
 {
     FILE *fichier = fopen(fname, "wb");
     if (fichier == NULL) return 1;
-    fprintf(fichier, "P6\n%d %d\n%d\n", save->width, save->height, save->max_value);
+    fprintf(fichier, "P6\n%d %d\n%d", save->width, save->height, save->max_value);
     for( int i = 0; i < save -> height; i++)
     {
         for( int j = 0;  j < save->width; j++)

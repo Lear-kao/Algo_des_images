@@ -20,7 +20,6 @@ int main( void )
         char filename[19] = "data/eye_s_asc.ppm";
         ppm *image = ppm_read_bin(filename);
         ppm_write_bin(image,"non.ppm");
-        printf("%d",a);
     }
     else return 1;
     return 0;
