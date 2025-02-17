@@ -19,3 +19,21 @@ void pgm_extract_blk(ppm *inpgm, double *blk[8][8], int i, int j)
         }
     }
 }
+
+/* 
+Q-3.2:
+Créer une fonction void pgm_dct(double bloc[8][8]) qui applique la transformée en cosinus
+discrète bi-dimensionnelle à un tableau bloc de taille 8 × 8. Pensez à vérifier le bon fonctionnement
+de votre fonction avec l’exemple du cours. 
+*/
+
+void pgm_dct(double bloc[8][8])
+{
+    for( int i = 0; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            bloc[i][j]
+        }
+    }
+}
