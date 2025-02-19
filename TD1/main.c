@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../header/headrs_type.h"
 
+
 int main( void )
 {
     int a;
@@ -8,7 +9,7 @@ int main( void )
     scanf("%d",&a);
     if(a == 0)
     {
-        return
+        return 0;
     }
     else
     {
@@ -31,6 +32,7 @@ int main( void )
            ppm *neg = ppm_negative(image);
            ppm_extract("bonjour.ppm",neg,100,100,200,200);
            ppm_write_bin(neg,"non.ppm");
+           printf("je suis un connard\n");
            ppm_write_histogram(image,"aled.ppm");
            pgm *conv;
            ppm_to_pgm(image,conv);
