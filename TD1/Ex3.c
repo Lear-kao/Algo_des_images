@@ -47,8 +47,8 @@ void pgm_dct(double *bloc[8][8])
             {
                 for( int v; u < 8; v++ )
                 {
-                    tmp +=  bloc[u][v] * 
-                            cos((2 * u+ 1) * i * PI / 16 ) * 
+                    tmp +=  (*bloc[u][v]) * 
+                            cos((2 * u+ 1) * i * PI / 16 ) *
                             cos((2 * v + 1) * i * PI / 16);
                 }
             }
@@ -58,7 +58,53 @@ void pgm_dct(double *bloc[8][8])
     (*bloc) = tmp_tab;   
 }
 
+
+/* 
+Q-3.3:
+Créer la fonction void pgm_quantify(double blk[8][8], double Q[8][8]) qui quantifie
+le bloc blk passé en paramètre avec la matrice de quantification 𝑄 passée en paramètre.
+*/
+void pgm_quantify( double *blk[8][8], double Q[8][8])
+{
+    for( int i = 0; i < 8; i++)
+    {
+        for( int j = 0; j  < 8; j++)
+        {
+            *blk[i][j] = blk[i][j]/Q[i][j];
+        }
+    }
+}
+
+
 /* 
 Q-3.4:
-
+Créer la fonction void pgm_zigzag_extract(double blk[8][8], int zgzg[64]) qui ex-
+trait les 64 nombres contenus dans le bloc blk de taille 8 × 8 dans l’ordre donné par la figure 1. Les
+valeurs de blk seront arrondies à l’entier le plus proche avant d’être stockées dans le tableau zgzg
+passé en paramètre.
 */
+
+void pgm_zigzag_extract(double blk[8][8], int *zgzg[64])
+{
+    int cmpt = 0;
+    for(int i = 0; i < 15; i++)
+    {
+        int start_x = (i < 8)? i : 7;
+        int start_y = (i < 8)? i : 7;
+        if( i%2 == 1 )
+        {
+            for(int j = start_x, h = start_y; j < 8 && h > 0 ; j++, h--)
+            {
+                zgzg[cmpt] = 
+                cmpt+=1;
+            }
+        }
+        else{
+            for(int j = start_x, h = start_y; j > 0 && h < 8 ; j--, h++)
+            {
+                zgzg[cmpt] = 
+                cmpt+=1;
+            }
+        }
+    }
+}

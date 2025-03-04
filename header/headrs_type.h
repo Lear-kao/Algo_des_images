@@ -96,6 +96,10 @@ void ppm_to_pgm(ppm *image, pgm *conv);
 */
 
 void pgm_extract_blk(ppm *inpgm, double *blk[8][8], int i, int j);
+double C( int nu );
+void pgm_dct(double *bloc[8][8]);
+void pgm_quantify( double *blk[8][8], double Q[8][8]),
+void pgm_zigzag_extract(double blk[8][8], int *zgzg[64]);
 
 
 /* 
