@@ -11,7 +11,7 @@ j) qui extrait le bloc 8 × 8 formé de la composante Y de l’image ppm pointé
 supérieur gauche se trouve aux coordonnées (𝑖, 𝑗). Ce bloc sera sauvegardé dans le tableau de double
 bloc passé en paramètre.
 */
-void pgm_extract_blk(ppm *inpgm, double *blk[8][8], int i, int j)
+void pgm_extract_blk(ppm *inpgm, double ***blk, int i, int j)
 {
     for( int x = 0; i  < 8; i++ )
     {
@@ -37,7 +37,11 @@ de votre fonction avec l’exemple du cours.
 */
 void pgm_dct(double ***bloc)
 {
-    double tmp_tab[8][8] = {0.0};
+    double **tmp_tab = malloc(sizeof( double *)*8);
+
+    for( int i = 0; i < 8;i++) 
+        tmp_tab[i] = malloc( sizeof(double) * 8 );
+
     for( int i = 0; i < 8; i++)
     {
         for(int j = 0; j < 8; j++)
@@ -55,7 +59,7 @@ void pgm_dct(double ***bloc)
             tmp_tab[i][j] = C(i) * C(j) * tmp;
         }
     }
-    (*bloc) = tmp_tab;   
+    *bloc = tmp_tab;   
 }
 
 
@@ -70,7 +74,7 @@ void pgm_quantify( double ***blk, double Q[8][8])
     {
         for( int j = 0; j  < 8; j++)
         {
-            *blk[i][j] = blk[i][j]/Q[i][j];
+            *blk[i][j] = *blk[i][j]/Q[i][j];
         }
     }
 }
@@ -84,7 +88,7 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double **blk, int *zgzg[64])
+void pgm_zigzag_extract(double **blk, double *zgzg[64])
 {
     int cmpt = 0;
     for(int i = 0; i < 15; i++)
@@ -95,14 +99,14 @@ void pgm_zigzag_extract(double **blk, int *zgzg[64])
         {
             for(int j = start_x, h = start_y; j < 8 && h > 0 ; j++, h--)
             {
-                zgzg[cmpt] = blk[i][j];
+                *zgzg[cmpt] = blk[i][j];
                 cmpt+=1;
             }
         }
         else{
             for(int j = start_x, h = start_y; j > 0 && h < 8 ; j--, h++)
             {
-                zgzg[cmpt] = blk[i][j];
+                *zgzg[cmpt] = blk[i][j];
                 cmpt+=1;
             }
         }

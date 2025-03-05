@@ -32,7 +32,7 @@ int main( void )
         pgm_extract_blk(image, &tab,0,0);
         pgm_dct(&tab);
         pgm_quantify(&tab,Q);
-        int *tab_2[64];
+        double *tab_2[64];
         pgm_zigzag_extract(Q,tab_2);
         for( int i = 0; i < 64; i++) printf("%d\n",*tab_2[i]);
         return 0;
