@@ -13,11 +13,11 @@ bloc passé en paramètre.
 */
 void pgm_extract_blk(ppm *inpgm, double ***blk, int i, int j)
 {
-    for( int x = 0; i  < 8; i++ )
+    for( int x = 0; x < 8; x++ )
     {
-        for( int y = 0; j < 8; j++)
+        for( int y = 0; y < 8; y++)
         {
-            *blk[x][y] = inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
+            (*blk)[x][y] = inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
         }
     }
 }
@@ -37,11 +37,10 @@ de votre fonction avec l’exemple du cours.
 */
 void pgm_dct(double ***bloc)
 {
-    double **tmp_tab = malloc(sizeof( double *)*8);
+    double **tmp_tab = malloc(sizeof( double*)*8);
 
     for( int i = 0; i < 8;i++) 
         tmp_tab[i] = malloc( sizeof(double) * 8 );
-
     for( int i = 0; i < 8; i++)
     {
         for(int j = 0; j < 8; j++)
@@ -49,16 +48,22 @@ void pgm_dct(double ***bloc)
             double tmp = 0.0;
             for( int u = 0; u < 8; u++ )
             {
-                for( int v; u < 8; v++ )
+                for( int v = 0; v < 8; v++ )
                 {
-                    tmp +=  (*bloc[u][v]) * 
-                            cos((2 * u+ 1) * i * PI / 16 ) *
-                            cos((2 * v + 1) * i * PI / 16);
+                    tmp +=  ((*bloc)[u][v]) * 
+                            cos(((2 * u+ 1) * i * PI) / 16 ) *
+                            cos(((2 * v + 1) * i * PI) / 16);
                 }
             }
             tmp_tab[i][j] = C(i) * C(j) * tmp;
+            printf("%f ",tmp_tab[i][j]);
         }
+        printf("\n");
     }
+    for (int i = 0; i < 8; i++) {
+        free((*bloc)[i]);
+    }
+    free(*bloc);
     *bloc = tmp_tab;   
 }
 
@@ -72,10 +77,12 @@ void pgm_quantify( double ***blk, double Q[8][8])
 {
     for( int i = 0; i < 8; i++)
     {
-        for( int j = 0; j  < 8; j++)
+        for( int j = 0; j < 8; j++)
         {
-            *blk[i][j] = *blk[i][j]/Q[i][j];
+            (*blk)[i][j] = (*blk)[i][j]/Q[i][j];
+            printf("%f ",(*blk)[i][j]);
         }
+        printf("\n");
     }
 }
 
@@ -88,7 +95,7 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double **blk, double *zgzg[64])
+void pgm_zigzag_extract(double blk[8][8], double *zgzg[64])
 {
     int cmpt = 0;
     for(int i = 0; i < 15; i++)

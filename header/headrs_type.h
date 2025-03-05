@@ -99,7 +99,7 @@ void pgm_extract_blk(ppm *inpgm, double ***blk, int i, int j);
 double C( int nu );
 void pgm_dct(double ***bloc);
 void pgm_quantify( double ***blk, double Q[8][8]);
-void pgm_zigzag_extract(double **blk, double *zgzg[64]);
+void pgm_zigzag_extract(double blk[8][8], double *zgzg[64]);
 
 
 /* 
