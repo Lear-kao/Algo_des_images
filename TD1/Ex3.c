@@ -35,7 +35,7 @@ Créer une fonction void pgm_dct(double bloc[8][8]) qui applique la transformée
 discrète bi-dimensionnelle à un tableau bloc de taille 8 × 8. Pensez à vérifier le bon fonctionnement
 de votre fonction avec l’exemple du cours. 
 */
-void pgm_dct(double *bloc[8][8])
+void pgm_dct(double ***bloc)
 {
     double tmp_tab[8][8] = {0.0};
     for( int i = 0; i < 8; i++)
@@ -64,7 +64,7 @@ Q-3.3:
 Créer la fonction void pgm_quantify(double blk[8][8], double Q[8][8]) qui quantifie
 le bloc blk passé en paramètre avec la matrice de quantification 𝑄 passée en paramètre.
 */
-void pgm_quantify( double *blk[8][8], double Q[8][8])
+void pgm_quantify( double ***blk, double Q[8][8])
 {
     for( int i = 0; i < 8; i++)
     {
@@ -84,25 +84,25 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double blk[8][8], int *zgzg[64])
+void pgm_zigzag_extract(double **blk, int *zgzg[64])
 {
     int cmpt = 0;
     for(int i = 0; i < 15; i++)
     {
         int start_x = (i < 8)? i : 7;
-        int start_y = (i < 8)? i : 7;
+        int start_y = (i < 8)? 0 : i-7;
         if( i%2 == 1 )
         {
             for(int j = start_x, h = start_y; j < 8 && h > 0 ; j++, h--)
             {
-                zgzg[cmpt] = 
+                zgzg[cmpt] = blk[i][j];
                 cmpt+=1;
             }
         }
         else{
             for(int j = start_x, h = start_y; j > 0 && h < 8 ; j--, h++)
             {
-                zgzg[cmpt] = 
+                zgzg[cmpt] = blk[i][j];
                 cmpt+=1;
             }
         }
