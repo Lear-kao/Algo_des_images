@@ -65,7 +65,6 @@ void pgm_write_histogram( pgm *image,  char *fname);
 --------Exercice 2---------
 ---------------------------
 */
-
 ppm* ppm_alloc(int  height, int width, int max_value);
 
 void ppm_free(ppm *image);
@@ -89,19 +88,45 @@ void ppm_write_histogram( ppm *image,  char *fname);
 void ppm_to_pgm(ppm *image, pgm *conv);
 
 
+
+/* 
+---------------------------
+--------Exercice 3---------
+---------------------------
+*/
+void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j);
+
+double C( int nu );
+
+void pgm_dct(double ***bloc);
+
+void pgm_quantify( double ***blk, double Q[8][8]);
+
+void pgm_zigzag_extract(double blk[8][8], int zgzg[64]);
+
+void pgm_rle(FILE *fd, int zgzg[64]);
+
+void pgm_to_jpeg(pgm  *in_pgm, char *fname);
+
 /* 
 ---------------------------
 --------Exercice 3---------
 ---------------------------
 */
 
-void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j);
-double C( int nu );
-void pgm_dct(double ***bloc);
-void pgm_quantify( double ***blk, double Q[8][8]);
-void pgm_zigzag_extract(double blk[8][8], int zgzg[64]);
-void pgm_rle(FILE *fd, int zgzg[64]);
-void pgm_to_jpeg(pgm  *in_pgm, char *fname);
+void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j);
+
+void pgm_dct_rev(double ***bloc);
+
+void pgm_quantify_rev( double ***blk, double Q[8][8]);
+
+void pgm_zigzag_extract_rev(double blk[8][8], int zgzg[64]);
+
+void pgm_rle_rev(FILE *fd, int zgzg[64]);
+
+void  jpeg_to_pgm(pgm *in_pgm,char *fname);
+
+
 /* 
 ---------------------------
 ------prog principal-------

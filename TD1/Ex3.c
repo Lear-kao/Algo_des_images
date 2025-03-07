@@ -210,7 +210,7 @@ void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j)
         {
             /* if (inpgm->pixel[i+x][j+y] == NULL ) 
                 (*blk)[x][y] = 0; */
-            inpgm->pixel[i][j] = (*blk)[x][y];
+            inpgm->pixel[i][j] = (int)(*blk)[x][y];
             //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
             //a utiliserpour pgm
         }
@@ -256,4 +256,120 @@ void pgm_quantify_rev( double ***blk, double Q[8][8])
             (*blk)[i][j] = (*blk)[i][j]*Q[i][j];
         }
     }
+}
+
+void pgm_zigzag_extract_rev(double blk[8][8], int zgzg[64])
+{
+    int cmpt = 0;
+
+    for (int i = 0; i < 15; i++) {
+        int start_x = (i < 8) ? i : 7;
+        int start_y = (i < 8) ? 0 : i - 7;
+        if (i % 2 == 1) { // Si la diagonale est "montante"
+            for (int j = start_x, h = start_y; j >= 0 && h < 8; j--, h++)
+            {
+                blk[h][j] = (double)zgzg[cmpt++];
+            }
+        } else { // Si la diagonale est "descendante"
+            for (int j = start_y, h = start_x; j < 8 && h >= 0; j++, h--)
+            {
+                blk[h][j]= (double)zgzg[cmpt++];
+
+            }
+        }
+    }
+    for( int i = 0; i < 8; i++)
+    {
+        for( int j = 0; j < 8; j++)
+        {
+            printf("%f ",blk[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void pgm_rle_rev(FILE *fd, int zgzg[64])
+{
+    // Récupere le 64 premier entier compressé en RLE, pour le mettre dans un tableau de 64 entiers.
+    int n=0;
+    char tmp;
+    int nb_zero, valeur;
+
+    while(n<64)
+    {
+        fscanf(fd,"%c",&tmp);
+        if(tmp == '@')
+        {
+            fscanf(fd,"%d",&nb_zero);
+            for(int i=0; i<nb_zero; ++i)
+            {
+                zgzg[n+i]=0;
+            }
+            n+=nb_zero;
+        }
+        else
+        {
+            fseek(fd,-sizeof(char),SEEK_CUR);
+            fscanf(fd,"%d",&valeur);
+            zgzg[n]=valeur;
+            ++n;
+        }
+        fscanf(fd,"%c",&tmp);
+    }
+}
+
+void jpeg_to_pgm(pgm *in_pgm, char *fname)
+{
+    FILE *jpg = fopen(fname, "r");
+    if (jpg == NULL)
+    {
+        perror("Erreur ouverture fichier");
+        exit(1);
+    }
+
+    double Q[8][8] = {
+        {16, 11, 10, 16, 24, 40, 51, 61},
+        {12, 12, 14, 19, 26, 58, 60, 55},
+        {14, 13, 16, 24, 40, 57, 69, 56},
+        {14, 17, 22, 29, 51, 87, 80, 62},
+        {18, 22, 37, 56, 68, 109, 103, 77},
+        {24, 35, 55, 64, 81, 104, 113, 92},
+        {49, 64, 78, 87, 103, 121, 120, 101},
+        {72, 92, 95, 98, 112, 100, 103, 99}
+    };
+
+    int width, height;
+    fscanf(jpg, "JPEG\n%d %d\n", &width, &height);
+    in_pgm->width = width;
+    in_pgm->height = height;
+    printf("clear 1st part\n");
+    int tab_2[64];
+    double **tab = malloc(sizeof(double*) * 8);
+    for (int i = 0; i < 8; i++)
+        tab[i] = malloc(sizeof(double) * 8);
+
+    for (int i = 0; i < width / 8; i++)
+    {
+        for (int j = 0; j < height / 8; j++)
+        {
+            pgm_rle_rev(jpg, tab_2);
+            printf("rle passed\n");
+            pgm_zigzag_extract_rev(tab, tab_2);
+            printf("zig passed\n");
+            pgm_quantify_rev(&tab, Q);
+            printf("quant passed\n");
+            pgm_dct_rev(&tab);
+            printf("dct passed\n");
+            blk_extract_pgm(in_pgm, &tab, i * 8, j * 8);
+            printf("extract passed\n");
+        }
+    }
+
+    // Fermeture du fichier
+    fclose(jpg);
+
+    // Libération mémoire
+    for (int i = 0; i < 8; i++)
+        free(tab[i]);
+    free(tab);
 }

@@ -12,7 +12,7 @@ int main( void )
     {
         char filename[19] = "data/eye_s_asc.pgm";
         pgm *image = pgm_read_bin(filename);
-        pgm_to_jpeg(image,"data/ahhhhhhhhhhhhh.jpeg");
+        jpeg_to_pgm(image,"data/ahhhhhhhhhhhhh.jpeg");
         return 0;
     }
     else
