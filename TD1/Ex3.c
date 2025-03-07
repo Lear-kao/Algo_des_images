@@ -80,9 +80,7 @@ void pgm_quantify( double ***blk, double Q[8][8])
         for( int j = 0; j < 8; j++)
         {
             (*blk)[i][j] = (*blk)[i][j]/Q[i][j];
-            printf("%f ",(*blk)[i][j]);
         }
-        printf("\n");
     }
 }
 
@@ -95,27 +93,66 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double blk[8][8], double *zgzg[64])
-{
+void pgm_zigzag_extract(double blk[8][8], double zgzg[64]) {
     int cmpt = 0;
-    for(int i = 0; i < 15; i++)
-    {
-        int start_x = (i < 8)? i : 7;
-        int start_y = (i < 8)? 0 : i-7;
-        if( i%2 == 1 )
-        {
-            for(int j = start_x, h = start_y; j < 8 && h > 0 ; j++, h--)
-            {
-                *zgzg[cmpt] = blk[i][j];
-                cmpt+=1;
+
+    for (int i = 0; i < 15; i++) {
+        int start_x = (i < 8) ? i : 7;
+        int start_y = (i < 8) ? 0 : i - 7;
+        if (i % 2 == 1) { // Si la diagonale est "montante"
+            for (int j = start_x, h = start_y; j >= 0 && h < 8; j--, h++) {
+                zgzg[cmpt++] = blk[h][j];
             }
-        }
-        else{
-            for(int j = start_x, h = start_y; j > 0 && h < 8 ; j--, h++)
-            {
-                *zgzg[cmpt] = blk[i][j];
-                cmpt+=1;
+        } else { // Si la diagonale est "descendante"
+            for (int j = start_y, h = start_x; j < 8 && h >= 0; j++, h--) {
+                zgzg[cmpt++] = blk[h][j];
             }
         }
     }
 }
+
+
+/* 
+Q-3.5:
+Créez la fonction void pgm_rle(FILE *fd, double zgzg[64]) qui écrit les entiers contenus
+dans le tableau zgzg dans le fichier pointé par fd. On supposera que le flux donné par fd aura été
+ouvert préalablement. Chaque entier sera écrit sur une ligne différente et une séquence de 𝑛 0 sera
+codée par @$n$ dès que 𝑛 ≥ 2.
+*/
+void pgm_rle(FILE *fd, double zgzg[64]) {
+    int i = 0;
+    while (i < 64) {
+        if (zgzg[i] == 0) { // Détection d'une séquence de 0
+            int count = 0;
+            while (i < 64 && zgzg[i] == 0) { // Compter le nombre de 0
+                count++;
+                i++;
+            }
+            if (count >= 2) {
+                fprintf(fd, "@$%d$\n", count); // Écriture sous forme compressée
+            } else {
+                for (int j = 0; j < count; j++) {
+                    fprintf(fd, "0\n"); // Écrire les 0 individuellement si count < 2
+                }
+            }
+        } else { 
+            fprintf(fd, "%d\n", zgzg[i]); // Écriture des valeurs normales
+            i++;
+        }
+    }
+}
+
+/* 
+Q-3.6:
+À l’aide des fonctions précédentes, créer une fonction void pgm_to_jpeg(pgm_t *in_pgm,
+char *fname) qui compresse l’image pgm pointée par in_pgm en utilisant l’algorithme de com-
+pression JPEG et qui stocke le résultat dans un fichier dont le nom est donné par fname. Le fichier
+compressé respectera le format suivant :
+1|    JPEG
+2|    widht height
+3|    val 0
+4|    val 1
+5|    val 2
+...
+*/
+

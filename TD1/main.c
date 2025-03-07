@@ -30,22 +30,12 @@ int main( void )
         char filename[19] = "data/eye_s_asc.ppm";
         ppm *image = ppm_read_bin(filename);
         pgm_extract_blk(image, &tab,0,0);
-        printf("premières parties passées \n");
-        for(int i = 0;  i < 8; i++)
-        {
-            for(  int j = 0; j < 8; j++ )
-            {
-                printf("%f ",tab[i][j]);
-            }
-            printf("\n");
-        }
         pgm_dct(&tab);
-        printf("check\n");
         pgm_quantify(&tab,Q);
-        printf("second check\n");
-        double *tab_2[64];
-        pgm_zigzag_extract(Q,tab_2);
-        for( int i = 0; i < 64; i++) printf("%f\n",*tab_2[i]);
+        double tab_2[64];
+        pgm_zigzag_extract(tab,tab_2);
+        FILE *jpg = fopen("test_jpg.jpg","w");
+        pgm_rle(jpg,tab_2);
         return 0;
     }
     else
