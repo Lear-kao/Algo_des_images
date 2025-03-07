@@ -10,32 +10,9 @@ int main( void )
     scanf("%d",&a);
     if(a == 0)
     {
-        double Q[8][8] = 
-        {
-            {16,11,10,16,24,40,51,61},
-            {12,12,14,19,26,58,60,55},
-            {14,13,16,24,40,57,69,56},
-            {14,17,22,29,51,87,80,62},
-            {18,22,37,56,68,109,103,77},
-            {24,35,55,64,81,104,113,92},
-            {49,64,78,87,103,121,120,101},
-            {72,92,95,98,112,100,103,99}
-        };
-        double **tab = malloc(sizeof(double*) * 8);
-        for( int i = 0; i < 8; i++ )
-        {
-            tab[i] = malloc(sizeof(double) * 8);
-            
-        }
-        char filename[19] = "data/eye_s_asc.ppm";
-        ppm *image = ppm_read_bin(filename);
-        pgm_extract_blk(image, &tab,0,0);
-        pgm_dct(&tab);
-        pgm_quantify(&tab,Q);
-        double tab_2[64];
-        pgm_zigzag_extract(tab,tab_2);
-        FILE *jpg = fopen("test_jpg.jpg","w");
-        pgm_rle(jpg,tab_2);
+        char filename[19] = "data/eye_s_asc.pgm";
+        pgm *image = pgm_read_bin(filename);
+        pgm_to_jpeg(image,"data/ahhhhhhhhhhhhh.jpeg");
         return 0;
     }
     else

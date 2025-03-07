@@ -11,13 +11,17 @@ j) qui extrait le bloc 8 × 8 formé de la composante Y de l’image ppm pointé
 supérieur gauche se trouve aux coordonnées (𝑖, 𝑗). Ce bloc sera sauvegardé dans le tableau de double
 bloc passé en paramètre.
 */
-void pgm_extract_blk(ppm *inpgm, double ***blk, int i, int j)
+void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j)
 {
     for( int x = 0; x < 8; x++ )
     {
         for( int y = 0; y < 8; y++)
         {
-            (*blk)[x][y] = inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
+            /* if (inpgm->pixel[i+x][j+y] == NULL ) 
+                (*blk)[x][y] = 0; */
+            (*blk)[x][y] = inpgm->pixel[i][j];
+            //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
+            //a utiliserpour pgm
         }
     }
 }
@@ -52,13 +56,11 @@ void pgm_dct(double ***bloc)
                 {
                     tmp +=  ((*bloc)[u][v]) * 
                             cos(((2 * u+ 1) * i * PI) / 16 ) *
-                            cos(((2 * v + 1) * i * PI) / 16);
+                            cos(((2 * v + 1) * j * PI) / 16);
                 }
             }
             tmp_tab[i][j] = C(i) * C(j) * tmp;
-            printf("%f ",tmp_tab[i][j]);
         }
-        printf("\n");
     }
     for (int i = 0; i < 8; i++) {
         free((*bloc)[i]);
@@ -93,7 +95,7 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double blk[8][8], double zgzg[64]) {
+void pgm_zigzag_extract(double blk[8][8], int zgzg[64]) {
     int cmpt = 0;
 
     for (int i = 0; i < 15; i++) {
@@ -101,11 +103,11 @@ void pgm_zigzag_extract(double blk[8][8], double zgzg[64]) {
         int start_y = (i < 8) ? 0 : i - 7;
         if (i % 2 == 1) { // Si la diagonale est "montante"
             for (int j = start_x, h = start_y; j >= 0 && h < 8; j--, h++) {
-                zgzg[cmpt++] = blk[h][j];
+                zgzg[cmpt++] = round(blk[h][j]);
             }
         } else { // Si la diagonale est "descendante"
             for (int j = start_y, h = start_x; j < 8 && h >= 0; j++, h--) {
-                zgzg[cmpt++] = blk[h][j];
+                zgzg[cmpt++] = round(blk[h][j]);
             }
         }
     }
@@ -119,24 +121,25 @@ dans le tableau zgzg dans le fichier pointé par fd. On supposera que le flux do
 ouvert préalablement. Chaque entier sera écrit sur une ligne différente et une séquence de 𝑛 0 sera
 codée par @$n$ dès que 𝑛 ≥ 2.
 */
-void pgm_rle(FILE *fd, double zgzg[64]) {
+void pgm_rle(FILE *fd, int zgzg[64]) {
     int i = 0;
     while (i < 64) {
         if (zgzg[i] == 0) { // Détection d'une séquence de 0
             int count = 0;
-            while (i < 64 && zgzg[i] == 0) { // Compter le nombre de 0
+            while (i < 64 && zgzg[i] == 0)
+            {
                 count++;
                 i++;
             }
             if (count >= 2) {
-                fprintf(fd, "@$%d$\n", count); // Écriture sous forme compressée
-            } else {
-                for (int j = 0; j < count; j++) {
-                    fprintf(fd, "0\n"); // Écrire les 0 individuellement si count < 2
-                }
+                fprintf(fd, "@$%d$\n", count);
+            } 
+            else 
+            {
+                fprintf(fd, "0\n"); 
             }
         } else { 
-            fprintf(fd, "%d\n", zgzg[i]); // Écriture des valeurs normales
+            fprintf(fd, "%d\n", zgzg[i]);
             i++;
         }
     }
@@ -155,4 +158,102 @@ compressé respectera le format suivant :
 5|    val 2
 ...
 */
+void  pgm_to_jpeg(pgm *in_pgm,char *fname)
+{
 
+    FILE *jpg = fopen(fname,"w");
+    if  (jpg == NULL) exit(1);
+    double Q[8][8] = 
+        {
+            {16,11,10,16,24,40,51,61},
+            {12,12,14,19,26,58,60,55},
+            {14,13,16,24,40,57,69,56},
+            {14,17,22,29,51,87,80,62},
+            {18,22,37,56,68,109,103,77},
+            {24,35,55,64,81,104,113,92},
+            {49,64,78,87,103,121,120,101},
+            {72,92,95,98,112,100,103,99}
+        };
+    double **tab = malloc(sizeof(double*) * 8);
+    for( int i = 0; i < 8; i++ )
+    {
+        tab[i] = malloc(sizeof(double) * 8);        
+    }
+
+    fprintf(jpg,"JPEG\n");
+    fprintf(jpg,"%d %d\n",in_pgm->width,in_pgm->height);
+    int tab_2[64];
+    for( int i = 0; i < 32;i++)
+    {
+        for( int j = 0; j < 32; j++){
+            pgm_extract_blk(in_pgm,&tab,i * 8,j * 8);
+            pgm_dct(&tab);
+            pgm_quantify(&tab,Q);
+            pgm_zigzag_extract(tab,tab_2);
+            pgm_rle(jpg,tab_2);
+        }
+    }
+}
+
+
+//TD4: Même  fonction à l'inverse:
+
+/* 
+Q-4.1:
+Réaliser toutes les fonctions inverses du processus de compression.
+*/
+void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j)
+{
+    for( int x = 0; x < 8; x++ )
+    {
+        for( int y = 0; y < 8; y++)
+        {
+            /* if (inpgm->pixel[i+x][j+y] == NULL ) 
+                (*blk)[x][y] = 0; */
+            inpgm->pixel[i][j] = (*blk)[x][y];
+            //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
+            //a utiliserpour pgm
+        }
+    }
+}
+
+void pgm_dct_rev(double ***bloc)
+{
+    double **tmp_tab = malloc(sizeof( double*)*8);
+
+    for( int i = 0; i < 8;i++) 
+        tmp_tab[i] = malloc( sizeof(double) * 8 );
+    for( int i = 0; i < 8; i++)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            double tmp = 0.0;
+            for( int u = 0; u < 8; u++ )
+            {
+                for( int v = 0; v < 8; v++ )
+                {
+                    tmp +=  ((*bloc)[u][v]) * 
+                            cos(((2 * u+ 1) * i * PI) / 16 ) *
+                            cos(((2 * v + 1) * j * PI) / 16);
+                }
+            }
+            tmp_tab[i][j] = tmp;
+        }
+    }
+    for (int i = 0; i < 8; i++) {
+        free((*bloc)[i]);
+    }
+    free(*bloc);
+    *bloc = tmp_tab;   
+}
+
+void pgm_quantify_rev( double ***blk, double Q[8][8])
+{
+    for( int i = 0; i < 8; i++)
+    {
+        for( int j = 0; j < 8; j++)
+        {
+            (*blk)[i][j] = (*blk)[i][j]*Q[i][j];
+        }
+    }
+}
