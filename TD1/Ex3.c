@@ -258,7 +258,7 @@ void pgm_quantify_rev( double ***blk, double Q[8][8])
     }
 }
 
-void pgm_zigzag_extract_rev(double blk[8][8], int zgzg[64])
+void pgm_zigzag_extract_rev(double **blk, int zgzg[64])
 {
     int cmpt = 0;
 
@@ -277,14 +277,6 @@ void pgm_zigzag_extract_rev(double blk[8][8], int zgzg[64])
 
             }
         }
-    }
-    for( int i = 0; i < 8; i++)
-    {
-        for( int j = 0; j < 8; j++)
-        {
-            printf("%f ",blk[i][j]);
-        }
-        printf("\n");
     }
 }
 
@@ -327,7 +319,8 @@ void jpeg_to_pgm(pgm *in_pgm, char *fname)
         exit(1);
     }
 
-    double Q[8][8] = {
+    double Q[8][8] = 
+    {
         {16, 11, 10, 16, 24, 40, 51, 61},
         {12, 12, 14, 19, 26, 58, 60, 55},
         {14, 13, 16, 24, 40, 57, 69, 56},
@@ -348,22 +341,18 @@ void jpeg_to_pgm(pgm *in_pgm, char *fname)
     for (int i = 0; i < 8; i++)
         tab[i] = malloc(sizeof(double) * 8);
 
-    for (int i = 0; i < width / 8; i++)
+    for (int i = 0; i < 31; i++)
     {
-        for (int j = 0; j < height / 8; j++)
+        for (int j = 0; j < 31; j++)
         {
             pgm_rle_rev(jpg, tab_2);
-            printf("rle passed\n");
             pgm_zigzag_extract_rev(tab, tab_2);
-            printf("zig passed\n");
             pgm_quantify_rev(&tab, Q);
-            printf("quant passed\n");
             pgm_dct_rev(&tab);
-            printf("dct passed\n");
             blk_extract_pgm(in_pgm, &tab, i * 8, j * 8);
-            printf("extract passed\n");
         }
     }
+    pgm_write_asc(in_pgm,"oui.pgm");
 
     // Fermeture du fichier
     fclose(jpg);

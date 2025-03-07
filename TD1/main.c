@@ -10,9 +10,8 @@ int main( void )
     scanf("%d",&a);
     if(a == 0)
     {
-        char filename[19] = "data/eye_s_asc.pgm";
-        pgm *image = pgm_read_bin(filename);
-        jpeg_to_pgm(image,"data/ahhhhhhhhhhhhh.jpeg");
+        pgm *image = pgm_read_bin("data/eye_s_asc.pgm");
+        jpeg_to_pgm(image,"nice.jpg");
         return 0;
     }
     else
@@ -27,7 +26,7 @@ int main( void )
            pgm *img = pgm_negative(image);
            pgm_write_bin(img,"non.pgm");
            pgm_extract("bonjour.pgm",img,100,100,200,200);
-          pgm_write_histogram(img,"bjr.pgm");
+           pgm_write_histogram(img,"bjr.pgm");
        }
        else if(a == 1)
        {

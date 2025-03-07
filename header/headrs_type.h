@@ -120,7 +120,7 @@ void pgm_dct_rev(double ***bloc);
 
 void pgm_quantify_rev( double ***blk, double Q[8][8]);
 
-void pgm_zigzag_extract_rev(double blk[8][8], int zgzg[64]);
+void pgm_zigzag_extract_rev(double **blk, int zgzg[64]);
 
 void pgm_rle_rev(FILE *fd, int zgzg[64]);
 
