@@ -100,9 +100,9 @@ double C( int nu );
 
 void pgm_dct(double ***bloc);
 
-void pgm_quantify( double ***blk, double Q[8][8]);
+void pgm_quantify( double **blk, double Q[8][8]);
 
-void pgm_zigzag_extract(double blk[8][8], int zgzg[64]);
+void pgm_zigzag_extract(double **blk, int zgzg[64]);
 
 void pgm_rle(FILE *fd, int zgzg[64]);
 
@@ -110,7 +110,7 @@ void pgm_to_jpeg(pgm  *in_pgm, char *fname);
 
 /* 
 ---------------------------
---------Exercice 3---------
+--------Exercice 4---------
 ---------------------------
 */
 
@@ -118,7 +118,7 @@ void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j);
 
 void pgm_dct_rev(double ***bloc);
 
-void pgm_quantify_rev( double ***blk, double Q[8][8]);
+void pgm_quantify_rev( double **blk, double Q[8][8]);
 
 void pgm_zigzag_extract_rev(double **blk, int zgzg[64]);
 

@@ -19,8 +19,8 @@ void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j)
         {
             /* if (inpgm->pixel[i+x][j+y] == NULL ) 
                 (*blk)[x][y] = 0; */
-            (*blk)[x][y] = inpgm->pixel[i][j];
-            //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
+            (*blk)[x][y] = inpgm->pixel[i + x][j + y];
+                //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
             //a utiliserpour pgm
         }
     }
@@ -30,8 +30,8 @@ void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j)
 
 double C( int nu )
 {
-    if (nu == 0) return sqrt(1.0/8);
-    return sqrt(2.0/8);
+    if (nu == 0) return 1.0/sqrt(2);
+    return 1;
 }
 /* 
 Q-3.2:
@@ -42,7 +42,18 @@ de votre fonction avec l’exemple du cours.
 void pgm_dct(double ***bloc)
 {
     double **tmp_tab = malloc(sizeof( double*)*8);
-
+    /* double bloc2[8][8] = 
+        {
+            {139,144,149,153,155,155,155,155},
+            {144,151,153,156,159,156,156,156},
+            {150,155,160,163,158,156,156,156},
+            {159,161,162,160,160,159,159,159},  
+            {159,160,161,162,162,155,155,155},
+            {161,161,161,161,160,157,157,157},
+            {162,162,161,163,162,157,157,157},
+            {162,162,161,161,163,158,158,158}
+        }; */
+    
     for( int i = 0; i < 8;i++) 
         tmp_tab[i] = malloc( sizeof(double) * 8 );
     for( int i = 0; i < 8; i++)
@@ -50,18 +61,19 @@ void pgm_dct(double ***bloc)
         for(int j = 0; j < 8; j++)
         {
             double tmp = 0.0;
-            for( int u = 0; u < 8; u++ )
+            for( int x = 0; x < 8; x++ )
             {
-                for( int v = 0; v < 8; v++ )
+                for( int y = 0; y < 8; y++ )
                 {
-                    tmp +=  ((*bloc)[u][v]) * 
-                            cos(((2 * u+ 1) * i * PI) / 16 ) *
-                            cos(((2 * v + 1) * j * PI) / 16);
+                    tmp +=  (*bloc)[x][y] * 
+                            cos(((2 * x + 1) * i * PI) / 16 ) *
+                            cos(((2 * y + 1) * j * PI) / 16);
                 }
             }
-            tmp_tab[i][j] = C(i) * C(j) * tmp;
+            tmp_tab[i][j] =0.25*C(i) * C(j) * tmp;
         }
     }
+
     for (int i = 0; i < 8; i++) {
         free((*bloc)[i]);
     }
@@ -75,13 +87,13 @@ Q-3.3:
 Créer la fonction void pgm_quantify(double blk[8][8], double Q[8][8]) qui quantifie
 le bloc blk passé en paramètre avec la matrice de quantification 𝑄 passée en paramètre.
 */
-void pgm_quantify( double ***blk, double Q[8][8])
+void pgm_quantify( double **blk, double Q[8][8])
 {
     for( int i = 0; i < 8; i++)
     {
         for( int j = 0; j < 8; j++)
         {
-            (*blk)[i][j] = (*blk)[i][j]/Q[i][j];
+            blk[i][j] = round(blk[i][j]/Q[i][j]);
         }
     }
 }
@@ -95,7 +107,7 @@ valeurs de blk seront arrondies à l’entier le plus proche avant d’être sto
 passé en paramètre.
 */
 
-void pgm_zigzag_extract(double blk[8][8], int zgzg[64]) {
+void pgm_zigzag_extract(double **blk, int zgzg[64]) {
     int cmpt = 0;
 
     for (int i = 0; i < 15; i++) {
@@ -103,11 +115,11 @@ void pgm_zigzag_extract(double blk[8][8], int zgzg[64]) {
         int start_y = (i < 8) ? 0 : i - 7;
         if (i % 2 == 1) { // Si la diagonale est "montante"
             for (int j = start_x, h = start_y; j >= 0 && h < 8; j--, h++) {
-                zgzg[cmpt++] = round(blk[h][j]);
+                zgzg[cmpt++] = blk[h][j];
             }
         } else { // Si la diagonale est "descendante"
             for (int j = start_y, h = start_x; j < 8 && h >= 0; j++, h--) {
-                zgzg[cmpt++] = round(blk[h][j]);
+                zgzg[cmpt++] = blk[h][j];
             }
         }
     }
@@ -132,7 +144,7 @@ void pgm_rle(FILE *fd, int zgzg[64]) {
                 i++;
             }
             if (count >= 2) {
-                fprintf(fd, "@$%d$\n", count);
+                fprintf(fd, "@%d\n", count);
             } 
             else 
             {
@@ -181,14 +193,14 @@ void  pgm_to_jpeg(pgm *in_pgm,char *fname)
     }
 
     fprintf(jpg,"JPEG\n");
-    fprintf(jpg,"%d %d\n",in_pgm->width,in_pgm->height);
+    fprintf(jpg,"%d %d\n",32*8,32*8);
     int tab_2[64];
     for( int i = 0; i < 32;i++)
     {
-        for( int j = 0; j < 32; j++){
+        for( int j = 0; j < 1; j++){
             pgm_extract_blk(in_pgm,&tab,i * 8,j * 8);
             pgm_dct(&tab);
-            pgm_quantify(&tab,Q);
+            pgm_quantify(tab,Q);
             pgm_zigzag_extract(tab,tab_2);
             pgm_rle(jpg,tab_2);
         }
@@ -210,10 +222,14 @@ void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j)
         {
             /* if (inpgm->pixel[i+x][j+y] == NULL ) 
                 (*blk)[x][y] = 0; */
-            inpgm->pixel[i][j] = (int)(*blk)[x][y];
+               printf("%f",*blk[x][y]);
+            inpgm->pixel[i][j] = (unsigned char)round((*blk)[x][y]);
             //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
             //a utiliserpour pgm
+
         }
+        printf("\n");
+
     }
 }
 
@@ -228,13 +244,13 @@ void pgm_dct_rev(double ***bloc)
         for(int j = 0; j < 8; j++)
         {
             double tmp = 0.0;
-            for( int u = 0; u < 8; u++ )
+            for( int x = 0; x < 8; x++ )
             {
-                for( int v = 0; v < 8; v++ )
+                for( int y = 0; y < 8; y++ )
                 {
-                    tmp +=  ((*bloc)[u][v]) * 
-                            cos(((2 * u+ 1) * i * PI) / 16 ) *
-                            cos(((2 * v + 1) * j * PI) / 16);
+                    tmp += ((*bloc)[x][y]) * 
+                            cos(((2 * i + 1) * x * PI) / 16 ) *
+                            cos(((2 * j + 1) * y * PI) / 16);
                 }
             }
             tmp_tab[i][j] = tmp;
@@ -247,13 +263,13 @@ void pgm_dct_rev(double ***bloc)
     *bloc = tmp_tab;   
 }
 
-void pgm_quantify_rev( double ***blk, double Q[8][8])
+void pgm_quantify_rev( double **blk, double Q[8][8])
 {
     for( int i = 0; i < 8; i++)
     {
         for( int j = 0; j < 8; j++)
         {
-            (*blk)[i][j] = (*blk)[i][j]*Q[i][j];
+            blk[i][j] = blk[i][j]*Q[i][j];
         }
     }
 }
@@ -265,42 +281,36 @@ void pgm_zigzag_extract_rev(double **blk, int zgzg[64])
     for (int i = 0; i < 15; i++) {
         int start_x = (i < 8) ? i : 7;
         int start_y = (i < 8) ? 0 : i - 7;
-        if (i % 2 == 1) { // Si la diagonale est "montante"
-            for (int j = start_x, h = start_y; j >= 0 && h < 8; j--, h++)
-            {
-                blk[h][j] = (double)zgzg[cmpt++];
-            }
-        } else { // Si la diagonale est "descendante"
-            for (int j = start_y, h = start_x; j < 8 && h >= 0; j++, h--)
-            {
-                blk[h][j]= (double)zgzg[cmpt++];
 
+        if (i % 2 == 0) {  // Descente en diagonale
+            for (int x = start_x, y = start_y; x >= 0 && y < 8; x--, y++) {
+                if (cmpt < 64) blk[x][y] = (double)zgzg[cmpt++];
+            }
+        } else {  // Montée en diagonale
+            for (int x = start_y, y = start_x; x < 8 && y >= 0; x++, y--) {
+                if (cmpt < 64) blk[x][y] = (double)zgzg[cmpt++];
             }
         }
     }
 }
 
-void pgm_rle_rev(FILE *fd, int zgzg[64])
-{
+
+void pgm_rle_rev(FILE *fd, int zgzg[64]){
     // Récupere le 64 premier entier compressé en RLE, pour le mettre dans un tableau de 64 entiers.
+    
     int n=0;
     char tmp;
     int nb_zero, valeur;
 
-    while(n<64)
-    {
+    while(n<64){
         fscanf(fd,"%c",&tmp);
-        if(tmp == '@')
-        {
+        if(tmp == '@'){
             fscanf(fd,"%d",&nb_zero);
-            for(int i=0; i<nb_zero; ++i)
-            {
+            for(int i=0; i<nb_zero; ++i){
                 zgzg[n+i]=0;
             }
             n+=nb_zero;
-        }
-        else
-        {
+        }else{
             fseek(fd,-sizeof(char),SEEK_CUR);
             fscanf(fd,"%d",&valeur);
             zgzg[n]=valeur;
@@ -310,9 +320,10 @@ void pgm_rle_rev(FILE *fd, int zgzg[64])
     }
 }
 
+
 void jpeg_to_pgm(pgm *in_pgm, char *fname)
 {
-    FILE *jpg = fopen(fname, "r");
+    FILE *jpg = fopen(fname, "rb");
     if (jpg == NULL)
     {
         perror("Erreur ouverture fichier");
@@ -333,32 +344,24 @@ void jpeg_to_pgm(pgm *in_pgm, char *fname)
 
     int width, height;
     fscanf(jpg, "JPEG\n%d %d\n", &width, &height);
-    in_pgm->width = width;
-    in_pgm->height = height;
+    printf("%d - %d",height,width);
+    in_pgm = pgm_alloc(256,256,255);
     printf("clear 1st part\n");
     int tab_2[64];
     double **tab = malloc(sizeof(double*) * 8);
     for (int i = 0; i < 8; i++)
         tab[i] = malloc(sizeof(double) * 8);
 
-    for (int i = 0; i < 31; i++)
+    for (int i = 0; i < 32; i++)
     {
-        for (int j = 0; j < 31; j++)
+        for (int j = 0; j < 32; j++)
         {
             pgm_rle_rev(jpg, tab_2);
             pgm_zigzag_extract_rev(tab, tab_2);
-            pgm_quantify_rev(&tab, Q);
+            pgm_quantify_rev(tab, Q);
             pgm_dct_rev(&tab);
             blk_extract_pgm(in_pgm, &tab, i * 8, j * 8);
         }
     }
-    pgm_write_asc(in_pgm,"oui.pgm");
-
-    // Fermeture du fichier
-    fclose(jpg);
-
-    // Libération mémoire
-    for (int i = 0; i < 8; i++)
-        free(tab[i]);
-    free(tab);
+    pgm_write_asc(in_pgm,"ahhhhh.pgm");
 }

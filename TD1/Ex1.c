@@ -110,15 +110,13 @@ int pgm_write_asc( pgm *save, char *fname)
     FILE *fichier = fopen(fname, "w");
     if (fichier == NULL) return  0;
     fprintf(fichier,"P2\n");
-    fprintf(fichier,"%d\n", save->width);
-    fprintf(fichier,"%d\n", save->height);
+    fprintf(fichier,"%d %d\n", save->width, save->height);
     fprintf(fichier,"%d\n", save->max_value);
     for(int i = 0; i < save -> height; i++)
     {
         for( int j =0; j < save  -> width; j++)
         {
             fprintf(fichier, "%d\n",save->pixel[i][j]);
-            fprintf(fichier,"\n");
         }
     }
     return 1;

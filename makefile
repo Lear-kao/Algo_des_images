@@ -29,7 +29,6 @@ $(OBJ_Dir)/comp.o : $(SRC_Dir)/main.c $(INC_Dir)/headrs_type.h
 
 $(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/comp.o 
 	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/comp.o $(CFLAGS)
-	./exe
 
 clean:
 	rm -f $(OBJ_Dir)/*.o n*.ppm .pgm

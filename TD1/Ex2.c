@@ -118,8 +118,7 @@ int ppm_write_asc( ppm *save, char *fname)
     FILE *fichier = fopen(fname, "w");
     if (fichier == NULL) return  1;
     fprintf(fichier,"P3\n");
-    fprintf(fichier,"%d\n", save->width);
-    fprintf(fichier,"%d\n", save->height);
+    fprintf(fichier,"%d %d", save->width,save->height);
     fprintf(fichier,"%d\n", save->max_value);
     for(int i = 0; i < save -> height; i++)
     {
