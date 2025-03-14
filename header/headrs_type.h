@@ -114,7 +114,7 @@ void pgm_to_jpeg(pgm  *in_pgm, char *fname);
 ---------------------------
 */
 
-void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j);
+void blk_extract_pgm(pgm *inpgm, double **blk, int i, int j);
 
 void pgm_dct_rev(double ***bloc);
 

@@ -13,7 +13,7 @@ int main( void )
         pgm *image = pgm_read_bin("data/eye_s_asc.pgm");
         pgm_to_jpeg(image,"aled.jpg");
         pgm *image_2 = malloc(sizeof(pgm));
-        jpeg_to_pgm(image_2,"exo3.jpeg");
+        jpeg_to_pgm(image,"exo3.jpeg");
         return 0;
     }
     else

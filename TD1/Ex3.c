@@ -17,11 +17,7 @@ void pgm_extract_blk(pgm *inpgm, double ***blk, int i, int j)
     {
         for( int y = 0; y < 8; y++)
         {
-            /* if (inpgm->pixel[i+x][j+y] == NULL ) 
-                (*blk)[x][y] = 0; */
-            (*blk)[x][y] = inpgm->pixel[i + x][j + y];
-                //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
-            //a utiliserpour pgm
+            (*blk)[x][y] = inpgm->pixel[i + x][j + y]*10;
         }
     }
 }
@@ -197,7 +193,7 @@ void  pgm_to_jpeg(pgm *in_pgm,char *fname)
     int tab_2[64];
     for( int i = 0; i < 32;i++)
     {
-        for( int j = 0; j < 1; j++){
+        for( int j = 0; j < 32; j++){
             pgm_extract_blk(in_pgm,&tab,i * 8,j * 8);
             pgm_dct(&tab);
             pgm_quantify(tab,Q);
@@ -214,22 +210,14 @@ void  pgm_to_jpeg(pgm *in_pgm,char *fname)
 Q-4.1:
 Réaliser toutes les fonctions inverses du processus de compression.
 */
-void blk_extract_pgm(pgm *inpgm, double ***blk, int i, int j)
+void blk_extract_pgm(pgm *inpgm, double **blk, int i, int j)
 {
     for( int x = 0; x < 8; x++ )
     {
         for( int y = 0; y < 8; y++)
         {
-            /* if (inpgm->pixel[i+x][j+y] == NULL ) 
-                (*blk)[x][y] = 0; */
-               printf("%f",*blk[x][y]);
-            inpgm->pixel[i][j] = (unsigned char)round((*blk)[x][y]);
-            //inpgm->pixel[i+x][j+y].r * 0.298 + inpgm->pixel[i+x][j+y].g * 0.587 + inpgm->pixel[i+x][j+y].b * 0.114;
-            //a utiliserpour pgm
-
+            inpgm->pixel[i+x][j+y] = (unsigned char)round(blk[x][y]);
         }
-        printf("\n");
-
     }
 }
 
@@ -248,7 +236,7 @@ void pgm_dct_rev(double ***bloc)
             {
                 for( int y = 0; y < 8; y++ )
                 {
-                    tmp += ((*bloc)[x][y]) * 
+                    tmp += C(x)*C(y)*((*bloc)[x][y]) * 
                             cos(((2 * i + 1) * x * PI) / 16 ) *
                             cos(((2 * j + 1) * y * PI) / 16);
                 }
@@ -345,7 +333,7 @@ void jpeg_to_pgm(pgm *in_pgm, char *fname)
     int width, height;
     fscanf(jpg, "JPEG\n%d %d\n", &width, &height);
     printf("%d - %d",height,width);
-    in_pgm = pgm_alloc(256,256,255);
+    //in_pgm = pgm_alloc(256,256,255);
     printf("clear 1st part\n");
     int tab_2[64];
     double **tab = malloc(sizeof(double*) * 8);
@@ -360,7 +348,7 @@ void jpeg_to_pgm(pgm *in_pgm, char *fname)
             pgm_zigzag_extract_rev(tab, tab_2);
             pgm_quantify_rev(tab, Q);
             pgm_dct_rev(&tab);
-            blk_extract_pgm(in_pgm, &tab, i * 8, j * 8);
+            blk_extract_pgm(in_pgm, tab, i * 8, j * 8);
         }
     }
     pgm_write_asc(in_pgm,"ahhhhh.pgm");
