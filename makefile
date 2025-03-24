@@ -4,6 +4,7 @@ CC = gcc
 EXE = exe
 INC_Dir = header
 SRC_Dir = TD1
+SRC_Dir2 = TD2
 OBJ_Dir = fich_obj
 #DATA_Dir = "chemin relatif au makefile des data"
 
@@ -23,6 +24,10 @@ $(OBJ_Dir)/fct2.o : $(SRC_Dir)/Ex2.c $(INC_Dir)/headrs_type.h
 
 $(OBJ_Dir)/fct3.o : $(SRC_Dir)/Ex3.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir)/Ex3.c $(CFLAGS) -o $(OBJ_Dir)/fct3.o $(CFLAGS)
+
+$(OBJ_Dir)/fct4.o : $(SRC_Dir2)/Ex1.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(SRC_Dir2)/Ex1.c $(CFLAGS) -o $(OBJ_Dir)/td2.o $(CFLAGS)
+
 
 $(OBJ_Dir)/comp.o : $(SRC_Dir)/main.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir)/main.c $(CFLAGS) -o $(OBJ_Dir)/comp.o $(CFLAGS)
