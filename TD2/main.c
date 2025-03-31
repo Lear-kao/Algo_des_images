@@ -5,7 +5,7 @@
 
 int main( void )
 {
-    pgm *image = pgm_read_bin("data/eye_s_asc.pgm");
-    rotation_pgm(image,20,120,120);
+    pgm *image = pgm_read_bin("ahhhhh.pgm");
+    rotation_pgm(image,20,256,256);
     return 0;
 }

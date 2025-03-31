@@ -15,7 +15,6 @@ On définit en variable globale un tableau de pointeurs sur fonctions B de sorte
 la bonne fonction 𝜔 selon la valeur de 𝑁.
 */
 
-double (*B[4])(double) = {B0,B1,B2,B3};
 
 double B0(double x)
 /* 
@@ -59,6 +58,8 @@ Expression de poid de B3 pour l'interpolation
     if ( x >= 0 && x <=  1 ) return 1/2 * abs(x) * abs(x) * abs(x) - x * x + 2/3;
     if ( abs(x) >= 1 && abs(x) <= 2 ) return 1/6 * (2 - abs(x)) *(2 - abs(x)) * (2 - abs(x));
 }
+
+double (*B[4])(double) = {B0,B1,B2,B3};
 
 /* 
 Q-1.2:
@@ -121,7 +122,6 @@ pgm *rotation_pgm(pgm *image, double theta, int x0, int y0)
             double y=y0 + (i - x0 )* sin(RAD) -(j - y0) * cos(RAD);
             temp->pixel[i][j] = interpolation_pgm(image, x, y);
         }
-        printf("%d\n",i);
     }
     pgm_write_asc(temp,"ahhhh.pgm");   
     return temp; 
