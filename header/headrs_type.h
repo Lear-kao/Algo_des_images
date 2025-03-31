@@ -1,6 +1,9 @@
 #ifndef _test_h_
 #define _test_h_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 /* 
 -------------------------
 ---structure générale----
@@ -125,6 +128,24 @@ void pgm_zigzag_extract_rev(double **blk, int zgzg[64]);
 void pgm_rle_rev(FILE *fd, int zgzg[64]);
 
 void  jpeg_to_pgm(pgm *in_pgm,char *fname);
+
+
+
+
+
+/* 
+---------------------------
+------------TD3------------
+---------------------------
+*/
+double B0( double x );
+double B1( double x );
+double B2( double x );
+double B3( double x );
+
+unsigned char interpolation_pgm( pgm *image, double x, double y );
+rgb interpolation_ppm(ppm *image, double x, double y);
+pgm *rotation_pgm(pgm *image, double theta, int x0, int y0);
 
 
 /* 

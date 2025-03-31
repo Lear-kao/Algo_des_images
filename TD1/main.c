@@ -47,14 +47,14 @@ int main( void )
         printf("\n");
     }
     pgm_dct(&tab2);
-    pgm_quantify(*tab2,Q);
-    pgm_quantify_rev(*tab2,Q);
-    pgm_dct_rev(tab2);
+    pgm_quantify(tab2,Q);
+    pgm_quantify_rev(tab2,Q);
+    pgm_dct_rev(&tab2);
     for( int i = 0; i < 8; i++)
     {
         for(int j = 0;  j  < 8; j++)
         {
-            printf("%f",*tab2[i][j]);
+            printf("%f",tab2[i][j]);
         }
         printf("\n");
     }

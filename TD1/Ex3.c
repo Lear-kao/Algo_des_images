@@ -237,11 +237,11 @@ void pgm_dct_rev(double ***bloc)
                 for( int y = 0; y < 8; y++ )
                 {
                     tmp += C(x)*C(y)*((*bloc)[x][y]) * 
-                            cos(((2 * i + 1) * x * PI) / 16 ) *
-                            cos(((2 * j + 1) * y * PI) / 16);
+                            cos(((2.0 * i + 1.0) * x * PI) / 16.0 ) *
+                            cos(((2.0* j + 1.0) * y * PI) / 16.0);
                 }
             }
-            tmp_tab[i][j] = tmp;
+            tmp_tab[i][j] = tmp*(2.0/8.0);
         }
     }
     for (int i = 0; i < 8; i++) {
