@@ -16,50 +16,48 @@ la bonne fonction 𝜔 selon la valeur de 𝑁.
 */
 
 
-double B0(double x)
-/* 
-Expression de poid de B0 pour l'interpolation
-*/
-{
-    if ( abs(x) > 0.5 ) return 0;
-    if ( abs(x) < 0.5 ) return 1;
-    if ( abs(x) == 0.5 ) return 0.5;
+double B0(double x){
+    if(fabs(x)>0.5){
+        return 0;
+    }else if (fabs(x)<0.5){
+        return 1;
+    }else {//else if( fabs(x)<0.5){
+        return 0.5;
+    }
 }
 
-
-double B1(double x)
-/* 
-Expression de poid de B1 pour l'interpolation
-*/
-{
-    if (abs(x) > 1) return 0;
-    if ( x >= -1 && x <= 0 ) return ++x;
-    if ( x <= 1 && x >= 0 ) return 1-x;
+double B1(double x){
+    if(fabs(x)>1){
+        return 0;
+    }else if(-1<= x && x<=0){
+        return x+1;
+    }else{//else if(0<= x && x<=1){
+        return 1-x;
+    }
 }
 
-double B2(double x)
-/* 
-Expression de poid de B2 pour l'interpolation
-*/
-{
-    if ( abs(x) > 1.5 ) return 0;
-    if ( x >= -1.5 && x <= -0.5) return 0.5 * ( x + 1.4 ) * ( x + 1.4 );
-    if ( abs(x) <= 0.5 ) return 0.75 - x * x;
-    if ( x <= 1.5 && x >= 0.5) return 0.5 * ( x - 1.5 ) * ( x - 1.5 );
+double B2(double x){
+    if(fabs(x)>1.5){
+        return 0;
+    }else if(-1.5 <= x && x<= -0.5){
+        return 0.5*(x+1.4)*(x+1.4);
+    }else if(-0.5 <= x && x <=0.5){
+        return 0.75 - x*x; 
+    }else{//else if(0.5 <= x && x <= 1.5){
+        return 0.5*(x-1.5)*(x-1.5);
+    }
 }
 
-
-double B3( double x )
-/* 
-Expression de poid de B3 pour l'interpolation
-*/
-{
-    if ( abs(x) > 2 ) return 0;
-    if ( x >= 0 && x <=  1 ) return 1/2 * abs(x) * abs(x) * abs(x) - x * x + 2/3;
-    if ( abs(x) >= 1 && abs(x) <= 2 ) return 1/6 * (2 - abs(x)) *(2 - abs(x)) * (2 - abs(x));
+double B3(double x){
+    if(fabs(x)>2){
+        return 0;
+    }else if(0 <= fabs(x) && fabs(x) <= 1){
+        return 1/2 * fabs(x)*fabs(x)*fabs(x) - x*x + 2/3;
+    }else{ //else if(1 <= fabs(x) && fabs(x) <= 2){
+        return 1/6 * (2-fabs(x))*(2-fabs(x))*(2-fabs(x));
+    }
 }
 
-double (*B[4])(double) = {B0,B1,B2,B3};
 
 /* 
 Q-1.2:
@@ -67,17 +65,18 @@ Créer une fonction unsigned char interpolation_pgm(pgm_t *image, double x, doub
 qui renvoie la valeur interpolée du pixel en nuance de gris de coordonnées (x,y) dans l’image
 image.
 */
-unsigned char interpolation_pgm( pgm *image, double x, double y )
-{
-    unsigned char temp = 0;
-    for(int i = 0; i < image->height; i++)
-    {
-        for( int j = 0; j < image->width; j++)
-        {
-            temp += B0(x-i)*B0(y-j)*image->pixel[i][j];
+unsigned char interpolation_pgm(pgm *image, double x, double y) {
+    double sum = 0, weight = 0;
+    
+    for (int i = 0; i < image->height; i++) {
+        for (int j = 0; j < image->width; j++) {
+            double w = B0(x - i) * B0(y - j);
+            sum += w * image->pixel[i][j];
+            weight += w;
         }
     }
-    return temp;
+    
+    return (weight > 0) ? (unsigned char)(sum / weight) : 0;
 }
 
 /* 
@@ -85,21 +84,31 @@ Q-1.3:
 Créer une fonction rgb interpolation_ppm(ppm_t *image, double x, double y) qui renvoie
 la valeur interpolée du pixel en rgb de coordonées (x,y) dans l’image image.
 */
-rgb interpolation_ppm(ppm *image, double x, double y)
-{
-    rgb temp;
-    temp.r = 0;
-    temp.g = 0;
-    temp.b = 0;
-    for (int i = 0; i < image->height; i++)
-    {
-        for( int j = 0; j < image->width; j++)
-        {
-            temp.r += B0(x-i)*B0(y-j)*image->pixel[i][j].r;
+rgb interpolation_ppm(ppm *image, double x, double y) {
+    rgb temp = {0, 0, 0};
+    double weight = 0;
+
+    int ix = (int)x, iy = (int)y;
+    for (int i = -1; i <= 2; i++) {
+        for (int j = -1; j <= 2; j++) {
+            int xi = ix + i, yj = iy + j;
+            if (xi >= 0 && xi < image->height && yj >= 0 && yj < image->width) {
+                double w = B0(x - xi) * B0(y - yj);
+                temp.r += w * image->pixel[xi][yj].r;
+                temp.g += w * image->pixel[xi][yj].g;
+                temp.b += w * image->pixel[xi][yj].b;
+                weight += w;
+            }
         }
+    }
+    if (weight > 0) {
+        temp.r = (unsigned char)fmin(255, fmax(0, temp.r / weight));
+        temp.g = (unsigned char)fmin(255, fmax(0, temp.g / weight));
+        temp.b = (unsigned char)fmin(255, fmax(0, temp.b / weight));
     }
     return temp;
 }
+
 
 /* 
 Q-1.4:
@@ -119,10 +128,10 @@ pgm *rotation_pgm(pgm *image, double theta, int x0, int y0)
         {
             
             double x=x0 + (i - x0 )* cos(RAD) -(j - y0) * sin(RAD);
-            double y=y0 + (i - x0 )* sin(RAD) -(j - y0) * cos(RAD);
+            double y = y0 + (i - x0) * sin(RAD) + (j - y0) * cos(RAD);
             temp->pixel[i][j] = interpolation_pgm(image, x, y);
         }
     }
-    pgm_write_asc(temp,"ahhhh.pgm");   
+    pgm_write_asc(temp,"ptn.pgm");   
     return temp; 
 }

@@ -138,6 +138,7 @@ void  jpeg_to_pgm(pgm *in_pgm,char *fname);
 ------------TD3------------
 ---------------------------
 */
+
 double B0( double x );
 double B1( double x );
 double B2( double x );
