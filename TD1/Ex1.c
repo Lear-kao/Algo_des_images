@@ -105,20 +105,19 @@ Q-1.5:
 caractères contenant le nom du fichier (fname) à écrire (au format ASCII) ainsi qu’un pointeur sur
 une structure pgm. La fonction retournera un entier égale à 0 si tout s’est bien passé et à 1 sinon.
 */
-int pgm_write_asc( pgm *save, char *fname)
-{
-    FILE *fichier = fopen(fname, "w");
-    if (fichier == NULL) return  0;
-    fprintf(fichier,"P2\n");
-    fprintf(fichier,"%d %d\n", save->width, save->height);
-    fprintf(fichier,"%d\n", save->max_value);
-    for(int i = 0; i < save -> height; i++)
-    {
-        for( int j =0; j < save  -> width; j++)
-        {
-            fprintf(fichier, "%d\n",save->pixel[i][j]);
+int pgm_write_asc(pgm * save, char* fname){
+    FILE * fic = fopen(fname, "w");
+    fprintf(fic,"P2\n");
+    fprintf(fic,"#commentaire\n");
+    fprintf(fic,"%d %d\n", save->width, save->height);
+    fprintf(fic,"%d\n", save->max_value);
+    for(int i=0; i< save->height; ++i){
+        for(int j=0; j< save->width; ++j){
+            fprintf(fic,"%d\n", save->pixel[i][j]);
         }
     }
+
+    fclose(fic);
     return 1;
 }
 
@@ -146,9 +145,7 @@ pgm* pgm_read_bin(char *fname)
     fscanf(file, "%3c",temp);
     do
     {
-        fscanf(file, "%c",&c);
-        printf("%c",c);
-        
+        fscanf(file, "%c",&c);        
     } while( c != '\n');
     fscanf(file, "%d",&width);
     fscanf(file, "%d",&height);
