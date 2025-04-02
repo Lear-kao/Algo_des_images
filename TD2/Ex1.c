@@ -71,16 +71,21 @@ image.
 */
 unsigned char interpolation_pgm(pgm *image, double x, double y) {
     double sum = 0;
-    
-    for (int i = 0; i < image->height; i++) {
-        for (int j = 0; j < image->width; j++) {
-            double w = B0(x - i) * B0(y - j);
-            sum += w * image->pixel[i][j];
+    int tempx = (int)x;
+    int tempy = (int)y;
+    int xi;
+    int yj;
+    for (int i = -1; i <= 2; i++) {
+        for (int j = -1; j <= 2; j++) {
+            xi = tempx + i;
+            yj = tempy + j;
+            if (xi >= 0 && xi < image->height && yj >= 0 && yj < image->width)
+                sum += B0(x - xi) * B0(y - yj) * image->pixel[xi][yj];
         }
     }
-    
     return (unsigned char)sum;
 }
+
 /* 
 Q-1.3:
 Créer une fonction rgb interpolation_ppm(ppm_t *image, double x, double y) qui renvoie
@@ -95,18 +100,12 @@ rgb interpolation_ppm(ppm *image, double x, double y) {
         for (int j = -1; j <= 2; j++) {
             int xi = ix + i, yj = iy + j;
             if (xi >= 0 && xi < image->height && yj >= 0 && yj < image->width) {
-                double w = B0(x - xi) * B0(y - yj);
+                double w = B2(x - xi) * B2(y - yj);
                 temp.r += w * image->pixel[xi][yj].r;
                 temp.g += w * image->pixel[xi][yj].g;
                 temp.b += w * image->pixel[xi][yj].b;
-                weight += w;
             }
         }
-    }
-    if (weight > 0) {
-        temp.r = (unsigned char)fmin(255, fmax(0, temp.r / weight));
-        temp.g = (unsigned char)fmin(255, fmax(0, temp.g / weight));
-        temp.b = (unsigned char)fmin(255, fmax(0, temp.b / weight));
     }
     return temp;
 }
@@ -137,20 +136,83 @@ pgm *rotation_pgm(pgm *image, double theta, int x0, int y0)
     return temp; 
 }
 
-pgm *rotation_ppm(pgm *image, double theta, int x0, int y0)
+ppm *rotation_ppm(ppm *image, double theta, int x0, int y0)
 {
     double RAD = theta * pi/180;
     
-    pgm *temp = pgm_alloc(image->height,image->width, image->max_value);
+    ppm *temp = ppm_alloc(image->height,image->width, image->max_value);
     for( int i = 0; i < temp->height; i++)
     {
         for( int j = 0; j < temp->width; j++)
         {
             double x = x0 + (i - x0 )* cos(RAD) -(j - y0) * sin(RAD);
             double y = y0 + (i - x0) * sin(RAD) + (j - y0) * cos(RAD);
-            temp->pixel[i][j] = interpolation_ppm(image, x, y);
+            rgb temprgb = interpolation_ppm(image, x, y);
+            temp->pixel[i][j].r = temprgb.r;
+            temp->pixel[i][j].g = temprgb.g;
+            temp->pixel[i][j].b = temprgb.b;
         }
     }
-    ppm_write_bin(temp,"ptn2.pgm");   
+    ppm_write_asc(temp,"ptn2.ppm");   
     return temp; 
 }
+
+
+/* 
+Q-1.5.1:
+Crée ppm_t *zoom(ppm_t *image, double lambda, int x0, int y0, int Dx, int Dy) qui
+crée une image de taille Dx x Dy correspondant au zoom de facteur lambda autour du point
+de coordonnées (x0,y0) de l’image passée en paramètre.
+*/
+ppm *zoom(ppm *image, double lambda, int x0, int y0, int Dx, int Dy)
+{
+    // Allouer une nouvelle image de taille Dx x Dy
+    ppm *temp = ppm_alloc(Dx, Dy, image->max_value);
+    
+    for (int i = 0; i < Dx; i++) {
+        for (int j = 0; j < Dy; j++) {
+            // Transformer chaque pixel de l'image d'entrée
+            int xpr = x0 + lambda * (i - x0);
+            int ypr = y0 + lambda * (j - y0);
+            temp->pixel[i][j] = interpolation_ppm(image,xpr,ypr);
+        }
+    }
+    // Sauvegarde de l'image zoomée
+    ppm_write_asc(temp, "zoom.ppm");
+    
+    return temp;
+}
+
+ppm *zoom_bis_CGPT(ppm *image, double lambda, int x0, int y0, int Dx, int Dy)
+{
+    ppm *temp = ppm_alloc(Dx, Dy, image->max_value);
+    int x, y;
+    for (int i = 0; i < Dx; i++) {
+        for (int j = 0; j < Dy; j++) {
+            // Trouver la position correspondante dans l'image originale
+            int x = x0 + (i - Dx / 2) / lambda;
+            int y = y0 + (j - Dy / 2) / lambda;
+
+            // Vérifier si la position est dans les limites de l'image originale
+            if (x >= 0 && x < image->height && y >= 0 && y < image->width) {
+                temp->pixel[i][j] = image->pixel[x][y];
+            } else {
+                // Option : mettre un pixel noir si hors limites
+                temp->pixel[i][j].r = 0;
+                temp->pixel[i][j].g = 0;
+                temp->pixel[i][j].b = 0;
+            }
+        }
+    }
+    ppm_write_asc(temp,"zoom.ppm");
+    return temp;
+}
+
+
+
+/* 
+Q-1.5.2:
+Crée ppm_t *shear(ppm_t *image, double cx, double cy, int Dx, int Dy) qui crée une
+image de taille Dx x Dy correspondant au cisaillement de facteur cx, cy de l’image passée en
+paramètre.
+*/

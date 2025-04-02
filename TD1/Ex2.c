@@ -78,8 +78,6 @@ ppm* ppm_read_asc(char *fname)
     do
     {
         fscanf(file, "%c",&temp);
-        printf("%c",temp);
-        
     } while( temp != '\n');
 
     fscanf(file,"%d",&width);
@@ -93,15 +91,7 @@ ppm* ppm_read_asc(char *fname)
             fscanf(file, "%hhu",&(image->pixel[i][j].r));
             fscanf(file, "%hhu",&(image->pixel[i][j].g));
             fscanf(file, "%hhu",&(image->pixel[i][j].b));
-            printf
-            (
-                "%hhu-%hhu-%hhu\n",
-                image->pixel[i][j].r,
-                image->pixel[i][j].g,
-                image->pixel[i][j].b
-            );
         }
-        printf("\n");
     }
     return image;
 }
@@ -118,16 +108,15 @@ int ppm_write_asc( ppm *save, char *fname)
     FILE *fichier = fopen(fname, "w");
     if (fichier == NULL) return  1;
     fprintf(fichier,"P3\n");
-    fprintf(fichier,"%d %d", save->width,save->height);
+    fprintf(fichier,"%d %d \n", save->width,save->height);
     fprintf(fichier,"%d\n", save->max_value);
     for(int i = 0; i < save -> height; i++)
     {
         for( int j =0; j < save  -> width; j++)
         {
-            fprintf(fichier, "%d\n",save->pixel[i][j].r);
-            fprintf(fichier, "%d\n",save->pixel[i][j].g);
+            fprintf(fichier, "%d ",save->pixel[i][j].r);
+            fprintf(fichier, "%d ",save->pixel[i][j].g);
             fprintf(fichier, "%d\n",save->pixel[i][j].b);
-            fprintf(fichier,"\n");
         }
     }
     return 0;
@@ -158,13 +147,10 @@ ppm* ppm_read_bin(char *fname)
     do
     {
         fscanf(file, "%c",&c);
-        printf("%c",c);
-        
     } while( c != '\n');
     fscanf(file, "%d",&width);
-    fscanf(file, "%d",&height);
-    fscanf(file, "%d",&max_value);
-    printf("%d-%d-%d\n",height,width,max_value);
+    fscanf(file, "%d\n",&height);
+    fscanf(file, "%d\n",&max_value);
     ppm *image = ppm_alloc(height,width,max_value);
     for( int i = 0;  i < height;  i++)
     {

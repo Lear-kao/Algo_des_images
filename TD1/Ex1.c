@@ -67,9 +67,7 @@ pgm* pgm_read_asc(char *fname)
     int max_value;
     char temp[3];
     char c;
-    printf("au village sans prétention\n");
     FILE *file = fopen(fname,"r");
-    printf("j'ai mauvaise réputation\n");
     if(file == NULL)
     {
         printf("erreur fichier\n");
@@ -79,7 +77,6 @@ pgm* pgm_read_asc(char *fname)
     do
     {
         fscanf(file, "%c",&c);
-        printf("%c",c);
         
     } while( c != '\n');
     fscanf(file,"%d",&width);
@@ -91,9 +88,7 @@ pgm* pgm_read_asc(char *fname)
         for( int j =0; j < width; j++)
         {
             fscanf(file, "%hhu",&(image->pixel[i][j]));
-            printf("%hhu\n",(image->pixel[i][j]));
         }
-        printf("\n");
     }
     return image;
 }
@@ -150,7 +145,6 @@ pgm* pgm_read_bin(char *fname)
     fscanf(file, "%d",&width);
     fscanf(file, "%d",&height);
     fscanf(file, "%d",&max_value);
-    printf("%d-%d-%d\n",height,width,max_value);
     pgm *image = pgm_alloc(height,width,max_value);
     for( int i = 0;  i < height;  i++)
     {

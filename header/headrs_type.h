@@ -147,7 +147,9 @@ double B3( double x );
 unsigned char interpolation_pgm( pgm *image, double x, double y );
 rgb interpolation_ppm(ppm *image, double x, double y);
 pgm *rotation_pgm(pgm *image, double theta, int x0, int y0);
-
+ppm *rotation_ppm(ppm *image, double theta, int x0, int y0);
+ppm *zoom(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
+ppm *zoom_bis_CGPT(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 
 /* 
 ---------------------------
