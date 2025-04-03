@@ -155,9 +155,11 @@ ppm *rotation_ppm(ppm *image, double theta, int x0, int y0);
 ppm *zoom(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 ppm *zoom_bis_CGPT(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 ppm *shear(ppm *image, double cx, double cy, int Dx, int Dy);
-*get_affine_transformation(point X_start[3], point X_end[3]);
-int inverse_matrice(int n,double A[n][n], double ***A_inv);
-void multiplication_matrice(int n, int m, int p, int **A, int B[m][p], int C[n][p]);
+void solve_system(double A[6][6], double B[6], double result[6]);
+void multiply_matrices(double A[6][6], double B[6], double result[6]);
+void pseudo_inverse(double X[6][6], double X_inv[6][6]);
+void get_affine_transformation(point A[3], point B[3]);
+ppm *affine_transformation(ppm *image, double *coeff_transformation);
 
 /* 
 ---------------------------
