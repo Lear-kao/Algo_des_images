@@ -216,3 +216,18 @@ Crée ppm_t *shear(ppm_t *image, double cx, double cy, int Dx, int Dy) qui crée
 image de taille Dx x Dy correspondant au cisaillement de facteur cx, cy de l’image passée en
 paramètre.
 */
+ppm *shear(ppm *image, double cx, double cy, int Dx, int Dy)
+{
+    ppm *temp = ppm_alloc(Dx,Dy,image->max_value);
+    for( int i = 0; i < image->height; i++)
+    {
+        for (int j = 0; j < image->width; j++)
+        {
+            int x = i+cx*j;
+            int y = j+cy*i;
+            temp->pixel[x][y] = image->pixel[i][j];
+        }
+    }
+    ppm_write_asc(temp,"cis.ppm");
+    return temp;
+}

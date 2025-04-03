@@ -28,6 +28,10 @@ typedef struct ppm
     rgb **pixel;
 } ppm;
 
+typedef struct point
+{
+int x,y;
+}point;
 
 /* 
 -------------------------
@@ -150,6 +154,10 @@ pgm *rotation_pgm(pgm *image, double theta, int x0, int y0);
 ppm *rotation_ppm(ppm *image, double theta, int x0, int y0);
 ppm *zoom(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 ppm *zoom_bis_CGPT(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
+ppm *shear(ppm *image, double cx, double cy, int Dx, int Dy);
+*get_affine_transformation(point X_start[3], point X_end[3]);
+int inverse_matrice(int n,double A[n][n], double ***A_inv);
+void multiplication_matrice(int n, int m, int p, int **A, int B[m][p], int C[n][p]);
 
 /* 
 ---------------------------

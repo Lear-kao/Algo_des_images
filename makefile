@@ -27,12 +27,14 @@ $(OBJ_Dir)/fct3.o : $(SRC_Dir)/Ex3.c $(INC_Dir)/headrs_type.h
 
 $(OBJ_Dir)/fct4.o : $(SRC_Dir2)/Ex1.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir2)/Ex1.c $(CFLAGS) -o $(OBJ_Dir)/fct4.o $(CFLAGS)
+$(OBJ_Dir)/fct5.o : $(SRC_Dir2)/Ex2.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(SRC_Dir2)/Ex2.c $(CFLAGS) -o $(OBJ_Dir)/fct5.o $(CFLAGS)
 
 $(OBJ_Dir)/comp.o : $(SRC_Dir2)/main.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir2)/main.c $(CFLAGS) -o $(OBJ_Dir)/comp.o $(CFLAGS)
 
-$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/comp.o 
-	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/comp.o $(CFLAGS)
+$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/comp.o 
+	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/comp.o $(CFLAGS)
 
 clean:
 	rm -f $(OBJ_Dir)/*.o n*.ppm .pgm
