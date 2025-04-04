@@ -43,6 +43,11 @@ int *max_tab_2d( int **tab, int max_ind);
 int moy3(int a, int b, int c);
 
 /* 
+---------------------------
+------------TD1------------
+---------------------------
+*/
+/* 
 -------------------------
 -------Exercice 1--------
 -------------------------
@@ -139,10 +144,15 @@ void  jpeg_to_pgm(pgm *in_pgm,char *fname);
 
 /* 
 ---------------------------
-------------TD3------------
+------------TD2------------
 ---------------------------
 */
 
+/* 
+---------------------------
+--------Exercice 1---------
+---------------------------
+*/
 double B0( double x );
 double B1( double x );
 double B2( double x );
@@ -155,11 +165,34 @@ ppm *rotation_ppm(ppm *image, double theta, int x0, int y0);
 ppm *zoom(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 ppm *zoom_bis_CGPT(ppm *image, double lambda, int x0, int y0, int Dx, int Dy);
 ppm *shear(ppm *image, double cx, double cy, int Dx, int Dy);
-void solve_system(double A[6][6], double B[6], double result[6]);
+
+/* 
+---------------------------
+--------Exercice 2---------
+---------------------------
+*/
 void multiply_matrices(double A[6][6], double B[6], double result[6]);
 void pseudo_inverse(double X[6][6], double X_inv[6][6]);
 void get_affine_transformation(point A[3], point B[3]);
 ppm *affine_transformation(ppm *image, double *coeff_transformation);
+
+
+/* 
+---------------------------
+------------TD3------------
+---------------------------
+*/
+
+/* 
+---------------------------
+--------Exercice 1---------
+---------------------------
+*/
+unsigned char max_pgm(pgm *image);
+pgm *naive_x(pgm *image);
+pgm *naive_y(pgm *image);
+pgm *naive_edge_detector(pgm *image);
+
 
 /* 
 ---------------------------
