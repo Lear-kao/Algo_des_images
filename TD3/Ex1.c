@@ -88,11 +88,19 @@ pgm *naive_edge_detector(pgm *image)
         for( int j = 1;  j < image->width; j++)
         {
             mod = image->pixel[i][j] - image->pixel[i][j-1];
-            if (mod < 0) mod = 0;
-            if (mod > 10) mod = 255;
             temp->pixel[i][j] = mod;
+        }
+    }
+    t = max_pgm(temp);
+    for( int i = 1; i < image->height; i++)
+    {
+        for( int j = 1;  j < image->width; j++)
+        {
+            
+            temp->pixel[i][j] = round(temp->pixel[i][j] * 255/t);
         }
     }
     pgm_write_asc(temp,"aled.pgm");
     return temp;
 }
+
