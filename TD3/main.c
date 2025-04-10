@@ -7,6 +7,6 @@ int main( void )
 {
     pgm *image2 = pgm_read_asc("data/eye_s_asc.pgm");
     naive_x(image2);
-    naive_edge_detector(image2);   
+    sobel_edge_detector(image2);   
     return 0;
 }

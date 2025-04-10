@@ -192,6 +192,7 @@ unsigned char max_pgm(pgm *image);
 pgm *naive_x(pgm *image);
 pgm *naive_y(pgm *image);
 pgm *naive_edge_detector(pgm *image);
+pgm *sobel_edge_detector(pgm *image);
 
 
 /* 
