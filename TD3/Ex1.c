@@ -145,10 +145,7 @@ int sobel_y(pgm *image, int x, int y)
     return mod;
 }
 
-/*
 
-
-*/
 pgm *sobel_edge_detector(pgm *image)
 {
     pgm *temp = pgm_alloc(image->height, image->width,image->max_value);
@@ -169,4 +166,80 @@ pgm *sobel_edge_detector(pgm *image)
     pgm_write_asc(temp,"0_0.pgm");
     return temp;
 }
+
+
+/* 
+--------------------------
+--------Exercice 2--------
+--------------------------
+*/
+
+/* 
+Q-2.1:
+Créer une fonction void gaussian_blur(pgm_t *image, double sigma, int n) qui ap-
+plique un filtre gaussien de taille 𝑛 = 2𝑝 + 1 et d’écart type 𝜎 à l’image image passée en paramètre.
+*/
+void gaussian_blur(pgm *image, double sigma, int n)
+{
+    double **kernel = malloc(sizeof(double*)*n);
+    for( int i = 0; i < n; i++)
+    {
+        kernel[i] = (double*)malloc(sizeof(double)*n);
+    }
+
+    double sum = 0.0;
+    for (int x = 0; x < n; x++) {
+        for (int y = 0; y < n; y++) {
+            int dx = x - n/2;
+            int dy = y - n/2;
+            kernel[x][y] = exp(-(dx * dx + dy * dy) / (2 * sigma * sigma));
+            sum += kernel[x][y];
+        }
+    }
+    // Normalisation (pour que la somme = 1)
+    for (int x = 0; x < n; x++) {
+        for (int y = 0; y < n; y++) {
+            kernel[x][y] /= sum;
+        }
+    }
+
+    pgm *temp = pgm_alloc(image->height, image->width,image->max_value);
+    char t = max_pgm(image);
+    int mod;
+    for( int i = 1; i < image->height-2; i++)
+    {
+        for( int j = 1;  j < image->width-2; j++)
+        {
+            temp->pixel[i][j] = gaussian_filter(image, i, j, kernel,n);
+        }  
+    }
+    pgm_write_asc(temp,"0-0.pgm");
+    image = temp;
+}
+
+
+int gaussian_filter(pgm *image, int x, int y, double **kernel, int n)
+{
+    int offset = n / 2;
+    double sum = 0.0;
+
+    for (int i = -offset; i <= offset; i++) {
+        for (int j = -offset; j <= offset; j++) {
+            int xi = x + i;
+            int yj = y + j;
+
+            // Vérification des bords
+            if (xi >= 0 && xi < image->height && yj >= 0 && yj < image->width) {
+                sum += image->pixel[xi][yj] * kernel[i + offset][j + offset];
+            }
+        }
+    }
+
+    // Clamp final
+    if (sum < 0) sum = 0;
+    if (sum > 255) sum = 255;
+
+    return (int)(sum + 0.5); // arrondi
+}
+
 
