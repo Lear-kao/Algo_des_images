@@ -242,4 +242,26 @@ int gaussian_filter(pgm *image, int x, int y, double **kernel, int n)
     return (int)(sum + 0.5); // arrondi
 }
 
-
+/* 
+Q-2.2:
+Créer une fonction double **gradiant_angle(pgm_t *grad_x, pgm_t *grad_y) qui prend
+en paramètre les deux composantes du gradient et renvoie l’angle de celui ci avec la tangeante
+horizontale. On utilisera la fonction atan2 de la bibliothèque math.h.
+*/
+double **gradiant_angle(pgm *grad_x, pgm *grad_y, pgm *norm)
+{
+    double **tab = malloc(sizeof(double*)*grad_x->height);
+    for( int i = 0; i  < grad_x->height; i++ )
+    {
+        tab[i] = malloc(sizeof(double)*grad_x->width);
+    }
+    for( int i = 0;  i < grad_x->height; i++)
+    {
+        for(int j = 0; j < grad_x->width; j++)
+        {
+            tab[i][j] = atan2(grad_x->pixel[i][j],grad_y->pixel[i][j]);
+            norm->pixel[i][j] = sqrt(grad_x->pixel[i][j]*grad_x->pixel[i][j]+grad_y->pixel[i][j]*grad_y->pixel[i][j]);
+        }
+    }
+    return tab;    
+}

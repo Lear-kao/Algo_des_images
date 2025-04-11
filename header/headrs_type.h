@@ -195,6 +195,7 @@ pgm *naive_edge_detector(pgm *image);
 pgm *sobel_edge_detector(pgm *image);
 void gaussian_blur(pgm *image, double sigma, int n);
 int gaussian_filter(pgm *image, int x, int y, double **kernel, int n);
+double **gradiant_angle(pgm *grad_x, pgm *grad_y, pgm *norm);
 
 /* 
 ---------------------------

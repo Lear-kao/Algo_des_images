@@ -288,3 +288,4 @@ void pgm_write_histogram( pgm *image,  char *fname)
     }
     pgm_write_bin(histo,fname);
 }
+
