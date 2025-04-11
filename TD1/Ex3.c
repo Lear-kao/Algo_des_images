@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../header/headrs_type.h"
-
-#define PI 3.1415
 /* 
 Q-3.1:
 Créer une fonction void pgm_extract_blk(pgm_t *inpgm, double blk[8][8], int i, int

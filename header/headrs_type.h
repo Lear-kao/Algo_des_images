@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#define PI 3.14159265
 /* 
 -------------------------
 ---structure générale----
@@ -32,6 +34,12 @@ typedef struct point
 {
 int x,y;
 }point;
+
+typedef struct pile
+{
+    int x, y;
+    struct pile *suite;
+} pile;
 
 /* 
 -------------------------
@@ -197,7 +205,18 @@ void gaussian_blur(pgm *image, double sigma, int n);
 int gaussian_filter(pgm *image, int x, int y, double **kernel, int n);
 double **gradiant_angle(pgm *grad_x, pgm *grad_y, pgm *norm);
 
+
 /* 
+---------------------------
+--------prog pile----------
+---------------------------
+*/
+pile* empiler(pile **p, int x, int y);
+pile* depiler(pile *p, int **valeur_retour);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+int rechercher(pile *p, int x,  int y);
+void afficher_pile(pile *p);
+
+/*                                                          
 ---------------------------
 ------prog principal-------
 ---------------------------

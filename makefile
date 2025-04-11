@@ -6,6 +6,8 @@ INC_Dir = header
 SRC_Dir = TD1
 SRC_Dir2 = TD2
 SRC_Dir3 = TD3
+SRC_Dir4 = fct_pile
+
 
 OBJ_Dir = fich_obj
 #DATA_Dir = "chemin relatif au makefile des data"
@@ -39,8 +41,13 @@ $(OBJ_Dir)/comp.o : $(SRC_Dir3)/main.c $(INC_Dir)/headrs_type.h
 $(OBJ_Dir)/fct6.o : $(SRC_Dir3)/Ex1.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(SRC_Dir3)/Ex1.c $(CFLAGS) -o $(OBJ_Dir)/fct6.o $(CFLAGS)
 
-$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/comp.o 
-	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/comp.o $(CFLAGS)
+$(OBJ_Dir)/fct8.o : $(SRC_Dir3)/Ex2.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(SRC_Dir3)/Ex2.c $(CFLAGS) -o $(OBJ_Dir)/fct8.o $(CFLAGS)
+
+$(OBJ_Dir)/fct7.o : $(SRC_Dir4)/bib_pile.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(SRC_Dir4)/bib_pile.c $(CFLAGS) -o $(OBJ_Dir)/fct7.o $(CFLAGS)
+$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/comp.o $(OBJ_Dir)/fct7.o 
+	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/fct7.o  $(OBJ_Dir)/comp.o $(CFLAGS)
 
 clean:
 	rm -f $(OBJ_Dir)/*.o n*.ppm .pgm

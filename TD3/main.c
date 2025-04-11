@@ -11,7 +11,7 @@ int main( void )
     pgm *grad_x = naive_x(image2);
     pgm *grad_y = naive_y(image2);
     pgm *norm = pgm_alloc(image2->height,image2->width,image2->max_value);
-    double **tab_grad = gradiant_angle(grad_x,grad_y);
+    double **tab_grad = gradiant_angle(grad_x,grad_y,norm);
 
     return 0;
 }
