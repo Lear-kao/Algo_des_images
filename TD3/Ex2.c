@@ -49,7 +49,6 @@ void gaussian_blur(pgm *image, double sigma, int n)
             temp->pixel[i][j] = gaussian_filter(image, i, j, kernel,n);
         }  
     }
-    pgm_write_asc(temp,"0-0.pgm");
     image = temp;
 }
 
@@ -109,78 +108,61 @@ tion prendra en paramètre une image correspondant à la norme du gradient, et u
 double contenant l’angle du gradient avec la droite horizontale pour chaque pixel de l’image (sauf
 les bords).
 */
-void non_maxima_suppression(pgm *norm, double **angle)
+void non_maxima_suppression(pgm *norm, double **angle, pile **edges)
 {
-    pile *edges;
-    pgm *temp = pgm_alloc(norm->height,norm->width,norm->max_value);
-    for( int i = 0; i < norm->height; i++)
-    {
-        for( int j = 0; j < norm->width; j++)
-        {
+    *edges = NULL; // Initialisation
+
+    pgm *temp = pgm_alloc(norm->height, norm->width, norm->max_value);
+    for (int i = 0; i < norm->height; i++) {
+        for (int j = 0; j < norm->width; j++) {
             temp->pixel[i][j] = norm->pixel[i][j];
         }
     }
-    // Suppression des non-maxima
+
     for (int y = 1; y < norm->height - 1; y++) {
-        for (int x = 1; x < norm->width - 1; x++) 
-        {
-            double theta = angle[y][x] * 180.0 / PI; // rad → degrés
+        for (int x = 1; x < norm->width - 1; x++) {
+            double theta = angle[y][x] * 180.0 / PI;
             if (theta < 0) theta += 180;
-            int q = 0, r = 0;  
-            // Détermination des pixels voisins à comparer
+
+            int q = 0, r = 0;
             if ((0 <= theta && theta < 22.5) || (157.5 <= theta && theta <= 180)) {
                 q = temp->pixel[y][x + 1];
                 r = temp->pixel[y][x - 1];
-            } else if (22.5 <= theta && theta < 67.5)
-            {
+            } else if (22.5 <= theta && theta < 67.5) {
                 q = temp->pixel[y + 1][x - 1];
                 r = temp->pixel[y - 1][x + 1];
-            } else if (67.5 <= theta && theta < 112.5)
-            {
+            } else if (67.5 <= theta && theta < 112.5) {
                 q = temp->pixel[y + 1][x];
                 r = temp->pixel[y - 1][x];
-            } 
-            else if (112.5 <= theta && theta < 157.5)
-            {
+            } else if (112.5 <= theta && theta < 157.5) {
                 q = temp->pixel[y - 1][x - 1];
                 r = temp->pixel[y + 1][x + 1];
             }
-            // Suppression si pas maximum local
+
             if (temp->pixel[y][x] < q || temp->pixel[y][x] < r) {
                 norm->pixel[y][x] = 0;
-            } else 
-            {
+            } else {
                 norm->pixel[y][x] = temp->pixel[y][x];
-                // Ajout à la liste si fort
-                if (norm->pixel[y][x] >= 100)
-                {
+                if (norm->pixel[y][x] >= 100) {
                     empiler(edges, x, y);
                 }
             }
         }
     }
+
+    pgm_free(temp); // Libération mémoire
 }
 
 
 void hysteresis_thresholding(pgm *image, float seuil_haut, float seuil_bas) {
     int w = image->width;
     int h = image->height;
-
-    // Étape 1 : trouver la valeur max
-    unsigned char max_val = 0;
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-            if (image->pixel[y][x] > max_val) {
-                max_val = image->pixel[y][x];
-            }
-        }
-    }
+    unsigned char max_val = max_pgm(image);
 
     // Calcul des seuils réels
     unsigned char seuil_haut_val = (unsigned char)(seuil_haut * max_val);
     unsigned char seuil_bas_val  = (unsigned char)(seuil_bas * max_val);
 
-    // Étape 2 : marquage des pixels
     for (int y = 0; y < h; y++) {
         for (int x = 0; x < w; x++) {
             if (image->pixel[y][x] >= seuil_haut_val) {
@@ -213,15 +195,6 @@ void hysteresis_thresholding(pgm *image, float seuil_haut, float seuil_bas) {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    // Suppression des faibles non connectés
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-            if (image->pixel[y][x] == WEAK_EDGE) {
-                image->pixel[y][x] = 0;
             }
         }
     }

@@ -6,6 +6,8 @@
 #include <math.h>
 
 #define PI 3.14159265
+#define STRONG_EDGE 255
+#define WEAK_EDGE 1
 /* 
 -------------------------
 ---structure générale----
@@ -201,9 +203,15 @@ pgm *naive_x(pgm *image);
 pgm *naive_y(pgm *image);
 pgm *naive_edge_detector(pgm *image);
 pgm *sobel_edge_detector(pgm *image);
+
+
+
 void gaussian_blur(pgm *image, double sigma, int n);
 int gaussian_filter(pgm *image, int x, int y, double **kernel, int n);
 double **gradiant_angle(pgm *grad_x, pgm *grad_y, pgm *norm);
+void non_maxima_suppression(pgm *norm, double **angle, pile **edges);
+void hysteresis_thresholding(pgm *image, float seuil_haut, float seuil_bas);
+
 
 
 /* 
