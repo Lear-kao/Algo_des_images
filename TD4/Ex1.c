@@ -76,7 +76,7 @@ void highlight_rectangle_pgm(pgm *image, int x, int y, int height, int width)
     }
 }
 
-void highlight_rectangle_pppm(ppm *image, int x, int y, int height, int width)
+void highlight_rectangle_ppm(ppm *image, int x, int y, int height, int width)
 {
     for( int i = 0; i < image->height; i++)
     {

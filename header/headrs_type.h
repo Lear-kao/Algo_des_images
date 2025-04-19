@@ -230,6 +230,26 @@ pile* depiler(pile *p, int **valeur_retour);
 int rechercher(pile *p, int x,  int y);
 void afficher_pile(pile *p);
 
+/* 
+---------------------------
+------------TD3------------
+---------------------------
+*/
+
+/* 
+---------------------------
+--------Exercice 1---------
+---------------------------
+*/
+pgm *empty_image(int value_max, int height, int width);
+
+ppm *empty_ppm(int  height, int width, int max_value);
+
+void highlight_rectangle_pgm(pgm *image, int x, int y, int height, int width);
+
+void highlight_rectangle_ppm(ppm *image, int x, int y, int height, int width);
+
+
 /*                                                          
 ---------------------------
 ------prog principal-------
