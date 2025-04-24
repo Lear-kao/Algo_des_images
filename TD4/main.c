@@ -5,8 +5,7 @@
 
 int main( void )
 {
-    ppm *image2 = ppm_read_asc("data/eye_s_asc.ppm");
-    highlight_rectangle_ppm(image2,15,50,12,12);
-    ppm_write_asc(image2,"cut.ppm");
+    ppm *image2 = ppm_read_bin("data/eye_s_asc.ppm");
+    highlight_rectangle_ppm(image2,100,100,100,100);
     return 0;
 }
