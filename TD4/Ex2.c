@@ -133,9 +133,9 @@ pgm *compute_NCC(ppm *image, ppm *pattern)
     temp->height = image->height;
     temp->width = image->width;
     temp->max_value = image->max_value;
-    for( int i = 0; i < image->height-20;i++)
+    for( int i = 0; i < image->height-100;i++)
     {
-        for(int  j = 0; j < image->width-20; j++)
+        for(int  j = 0; j < image->width-100; j++)
         {
             temp->pixel[i][j] = NCC_ppm(image,pattern,i,j,pat_moy,pat_std);
         }
