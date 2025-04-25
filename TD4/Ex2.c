@@ -10,7 +10,7 @@ Créer les fonctions double average_pixels_pgm(pgm_t *image) et double_rgb avera
 pixels_ppm(ppm_t *image) qui permettent de calculer la valeur moyenne des pixels de
 l’image pgm ou ppm passée en paramètre.
 */
-d_rgb average_pixels_ppm(ppm *image)
+d_rgb *average_pixels_ppm(ppm *image)
 {
     double d_sum_r = 0,d_sum_g = 0,d_sum_b = 0;
     for( int i = 0; i < image->height; i++)
@@ -22,9 +22,10 @@ d_rgb average_pixels_ppm(ppm *image)
             d_sum_b += image->pixel[i][j].b;
         }
     }
-    d_rgb moy_rgb.r = d_sum_r/(image->height * image->width); 
-    moy_rgb.g = d_sum_g/(image->height * image->width); 
-    moy_rgb.b = d_sum_b/(image->height * image->width); 
+    d_rgb *moy_rgb = malloc(sizeof(d_rgb));
+    moy_rgb->r = d_sum_r/(image->height * image->width); 
+    moy_rgb->g = d_sum_g/(image->height * image->width); 
+    moy_rgb->b = d_sum_b/(image->height * image->width); 
     return moy_rgb;
 }
 
@@ -38,21 +39,22 @@ rgb std_dev_ppm(picture *image, double_rgb average) qui permettent de calculer l
 fonction std_dev, définie ci-desssous, de l’image pgm ou ppm passée en paramètre.
 */
 
-d_rgb std_dev_ppm(ppm *image, d_rgb average)
+d_rgb *std_dev_ppm(ppm *image, d_rgb *average)
 {
     double sum_r,sum_g = 0,sum_b = 0;
     for( int i = 0; i < image->height; i++)
     {
         for ( int j = 0; j < image->width; j++)
         {
-            sum_r += (image->pixel[i][j].r-average.r)*(image->pixel[i][j].r-average.r);
-            sum_g += (image->pixel[i][j].g-average.g)*(image->pixel[i][j].g-average.g);
-            sum_b += (image->pixel[i][j].b-average.b)*(image->pixel[i][j].b-average.b);
+            sum_r += (image->pixel[i][j].r-average->r)*(image->pixel[i][j].r-average->r);
+            sum_g += (image->pixel[i][j].g-average->g)*(image->pixel[i][j].g-average->g);
+            sum_b += (image->pixel[i][j].b-average->b)*(image->pixel[i][j].b-average->b);
         }
     }
-    d_rgb result.r = sqrt(sum_r);
-    result.g = sqrt(sum_g);
-    result.b = sqrt(sum_b);
+    d_rgb *result = malloc(sizeof(d_rgb));
+    result->r = sqrt(sum_r);
+    result->g = sqrt(sum_g);
+    result->b = sqrt(sum_b);
     return result;
 }
 
@@ -67,10 +69,9 @@ average_pattern, double std_dev_pattern)
 • unsigned char NCC_ppm(ppm_t *image, ppm_t *pattern, int x, int y, double_-
 rgb average_pattern, double_rgb std_dev_pattern)
 */
-unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb average_pattern, d_rgb std_dev_pattern)
+unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb *average_pattern, d_rgb *std_dev_pattern)
 {
     //calcul pour l'image
-    d_rgb average;
     double d_sum_r = 0,d_sum_g = 0,d_sum_b = 0;
     for( int i = 0; i < pattern->height; i++)
     {
@@ -81,9 +82,10 @@ unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb average_patt
             d_sum_b += image->pixel[i+x][j+y].b;
         }
     }
-    d_rgb average.r = d_sum_r/(pattern->height * pattern->width); 
-    average.g = d_sum_g/(pattern->height * pattern->width); 
-    average.b = d_sum_b/(pattern->height * pattern->width); 
+    d_rgb *average = malloc(sizeof(d_rgb));
+    average->r = d_sum_r/(pattern->height * pattern->width); 
+    average->g = d_sum_g/(pattern->height * pattern->width); 
+    average->b = d_sum_b/(pattern->height * pattern->width); 
 
     //calcul pour la formule
     d_rgb temp_bot, temp_top;    
@@ -92,19 +94,19 @@ unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb average_patt
     {
         for ( int j = 0; j < pattern->width; j++)
         {
-            sum_r += (image->pixel[i+x][j+y].r-average.r)*(image->pixel[i+x][j+y].r-average.r);
-            sum_g += (image->pixel[i+x][j+y].g-average.g)*(image->pixel[i+x][j+y].g-average.g);
-            sum_b += (image->pixel[i+x][j+y].b-average.b)*(image->pixel[i+x][j+y].b-average.b);
+            sum_r += (image->pixel[i+x][j+y].r-average->r)*(image->pixel[i+x][j+y].r-average->r);
+            sum_g += (image->pixel[i+x][j+y].g-average->g)*(image->pixel[i+x][j+y].g-average->g);
+            sum_b += (image->pixel[i+x][j+y].b-average->b)*(image->pixel[i+x][j+y].b-average->b);
 
-            temp_top.r += (pattern->pixel[i][j].r - average_pattern.r) * (image->pixel[i+x][j+y].r-average.r);
-            temp_top.g += (pattern->pixel[i][j].g - average_pattern.g) * (image->pixel[i+x][j+y].g-average.g);
-            temp_top.b += (pattern->pixel[i][j].b - average_pattern.b) * (image->pixel[i+x][j+y].b-average.b);
+            temp_top.r += (pattern->pixel[i][j].r - average_pattern->r) * (image->pixel[i+x][j+y].r-average->r);
+            temp_top.g += (pattern->pixel[i][j].g - average_pattern->g) * (image->pixel[i+x][j+y].g-average->g);
+            temp_top.b += (pattern->pixel[i][j].b - average_pattern->b) * (image->pixel[i+x][j+y].b-average->b);
 
         }
     }
-    temp_bot.r = sqrt(sum_r)*std_dev_pattern.r;
-    temp_bot.g = sqrt(sum_g)*std_dev_pattern.g;
-    temp_bot.b = sqrt(sum_b)*std_dev_pattern.b;
+    temp_bot.r = sqrt(sum_r)*std_dev_pattern->r;
+    temp_bot.g = sqrt(sum_g)*std_dev_pattern->g;
+    temp_bot.b = sqrt(sum_b)*std_dev_pattern->b;
     
     unsigned char ccn  = sqrt
     (
@@ -125,8 +127,8 @@ NCC entre pattern et la sous image d’indice (𝑖, 𝑗) de image.
 
 pgm *compute_NCC(ppm *image, ppm *pattern)
 {
-    d_rgb pat_moy = average_pixels_ppm(pattern);
-    d_rgb pat_std = std_dev_ppm(pattern,pat_moy);
+    d_rgb *pat_moy = average_pixels_ppm(pattern);
+    d_rgb *pat_std = std_dev_ppm(pattern,pat_moy);
     pgm *temp = malloc(sizeof(ppm));
     temp->height = image->height;
     temp->width = image->width;
@@ -140,3 +142,4 @@ pgm *compute_NCC(ppm *image, ppm *pattern)
     }
     return temp;
 }
+

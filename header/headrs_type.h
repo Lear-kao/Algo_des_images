@@ -250,6 +250,19 @@ void highlight_rectangle_pgm(pgm *image, int x, int y, int height, int width);
 void highlight_rectangle_ppm(ppm *image, int x, int y, int height, int width);
 
 
+/* 
+---------------------------
+--------Exercice 2---------
+---------------------------
+*/
+d_rgb *average_pixels_ppm(ppm *image);
+
+d_rgb *std_dev_ppm(ppm *image, d_rgb *average);
+
+unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb *average_pattern, d_rgb *std_dev_pattern);
+
+pgm *compute_NCC(ppm *image, ppm *pattern);
+
 /*                                                          
 ---------------------------
 ------prog principal-------

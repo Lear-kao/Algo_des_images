@@ -5,7 +5,9 @@
 
 int main( void )
 {
-    ppm *image2 = ppm_read_bin("data/eye_s_asc.ppm");
-    highlight_rectangle_ppm(image2,100,100,100,100);
+    ppm *image1 = ppm_read_bin("data/charlie_p2.ppm");
+    ppm *image2 = ppm_read_bin("data/puzzle2.ppm");
+    pgm *ah = compute_NCC(image2,image1);
+    pgm_write_bin( ah,"ahhhh.pgm");
     return 0;
 }
