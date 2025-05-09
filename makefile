@@ -52,8 +52,11 @@ $(OBJ_Dir)/td4e1.o : $(SRC_Dir4)/Ex1.c $(INC_Dir)/headrs_type.h
 $(OBJ_Dir)/td4e2.o : $(SRC_Dir4)/Ex2.c $(INC_Dir)/headrs_type.h
 	$(CC) -c $(CFLAGS) -o $(OBJ_Dir)/td4e2.o $(SRC_Dir4)/Ex2.c
 
-$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/fct7.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/td4e1.o $(OBJ_Dir)/td4e2.o $(OBJ_Dir)/comp.o
-	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/fct7.o $(OBJ_Dir)/td4e1.o $(OBJ_Dir)/td4e2.o $(OBJ_Dir)/comp.o $(CFLAGS)
+$(OBJ_Dir)/td4e3.o : $(SRC_Dir4)/Ex3.c $(INC_Dir)/headrs_type.h
+	$(CC) -c $(CFLAGS) -o $(OBJ_Dir)/td4e3.o $(SRC_Dir4)/Ex3.c
+
+$(EXE): $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/fct7.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/td4e1.o $(OBJ_Dir)/td4e2.o $(OBJ_Dir)/td4e3.o $(OBJ_Dir)/comp.o
+	$(CC) -o $(EXE) $(OBJ_Dir)/fct.o $(OBJ_Dir)/fct2.o $(OBJ_Dir)/fct3.o $(OBJ_Dir)/fct4.o $(OBJ_Dir)/fct5.o $(OBJ_Dir)/fct8.o $(OBJ_Dir)/fct6.o $(OBJ_Dir)/fct7.o $(OBJ_Dir)/td4e1.o $(OBJ_Dir)/td4e2.o $(OBJ_Dir)/td4e3.o $(OBJ_Dir)/comp.o $(CFLAGS)
 
 clean:
 	rm -f $(OBJ_Dir)/*.o n*.ppm .pgm

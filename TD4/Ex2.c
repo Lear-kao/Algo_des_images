@@ -114,7 +114,6 @@ unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb *average_pat
         (temp_top.g/temp_bot.g)*(temp_top.g/temp_bot.g) + 
         (temp_top.r/temp_bot.r)*(temp_top.r/temp_bot.r)
     ) / sqrt(3);
-
     return ccn;
 }
 
@@ -129,10 +128,7 @@ pgm *compute_NCC(ppm *image, ppm *pattern)
 {
     d_rgb *pat_moy = average_pixels_ppm(pattern);
     d_rgb *pat_std = std_dev_ppm(pattern,pat_moy);
-    pgm *temp = malloc(sizeof(ppm));
-    temp->height = image->height;
-    temp->width = image->width;
-    temp->max_value = image->max_value;
+    pgm *temp = empty_image(image->height,image->width,image->max_value);
     for( int i = 0; i < image->height-100;i++)
     {
         for(int  j = 0; j < image->width-100; j++)

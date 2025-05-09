@@ -263,6 +263,16 @@ unsigned char NCC_ppm(ppm *image, ppm *pattern, int x, int y, d_rgb *average_pat
 
 pgm *compute_NCC(ppm *image, ppm *pattern);
 
+
+/* 
+--------------------------
+-------Exercice 3---------
+--------------------------
+*/
+pgm *thresholding(pgm *image, int threshold);
+pgm *local_maxima(pgm *image);
+pgm *pattern_matching(ppm *image, ppm *pattern);
+
 /*                                                          
 ---------------------------
 ------prog principal-------
